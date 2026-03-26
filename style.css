@@ -1,0 +1,569 @@
+/* ─── Fonts ─────────────────────────────────── */
+@font-face {
+  font-family: 'Delight';
+  src: url('fonts/Delight-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'Delight';
+  src: url('fonts/Delight-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Type scale (fluid vw, ref: 1440px) ───── */
+:root {
+  --text-xs:      clamp(0.65rem, 0.83vw,  0.75rem);  /* 12px */
+  --text-nav:     clamp(0.75rem, 0.97vw,  0.875rem); /* 14px */
+  --text-sm:      clamp(1rem,    1.39vw,  1.25rem);  /* 20px */
+  --text-base:    clamp(1.25rem, 2.22vw,  2rem);     /* 32px */
+  --text-md:      clamp(2rem,    3.89vw,  3.5rem);   /* 56px */
+  --text-display: clamp(2rem,    5.56vw,  5rem);     /* 80px */
+
+  --color-green:  #49a862;
+  --color-cream:  #f5f4f0;
+  --color-dark:   #1e1e20;
+  --color-white:  #ffffff;
+
+  /* ─── Noise ──────────────────────────────────
+     Ajuste os valores abaixo para controlar a textura:
+     --noise-opacity   → intensidade geral  (0 = off, 0.08 = forte)
+     --noise-frequency → granulação (0.5 = grossa, 1.0 = fina)
+     --noise-size      → tamanho do tile repetido
+  ──────────────────────────────────────────── */
+  --noise-opacity:   0.36;
+  --noise-frequency: 0.8;
+  --noise-size:      180px;
+}
+
+/* ─── Noise overlay ────────────────────────────────────────────
+   Camada de film grain fixa abaixo do cursor e do overlay,
+   mas acima dos backgrounds. Pointer-events: none = não bloqueia cliques.
+   Para desativar: setar --noise-opacity: 0;
+──────────────────────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  opacity: var(--noise-opacity);
+  mix-blend-mode: overlay; /* distribui o grain igualmente em fundos claros e escuros */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: var(--noise-size);
+}
+
+/* ─── Reset ────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Base ─────────────────────────────────── */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Delight', sans-serif;
+  font-weight: 300;
+  background-color: var(--color-cream);
+  color: var(--color-dark);
+  transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+#snap {
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+/* ─── Background states ────────────────────── */
+body[data-bg="hero"] {
+  background-color: var(--color-cream);
+  color: var(--color-dark);
+}
+body[data-bg="hero"]  .nav-logo { color: var(--color-dark); }
+
+body[data-bg="green"] {
+  background-color: var(--color-green);
+  color: var(--color-cream);
+}
+body[data-bg="green"] .nav-logo { color: var(--color-dark); }
+
+body[data-bg="dark"] {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+}
+body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
+
+/* ─── Nav ──────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.8vw 6vw;
+}
+
+.nav-logo {
+  width: clamp(1.8rem, 2.8vw, 3rem);
+  height: auto;
+  color: var(--color-dark);
+  transition: color 0.6s ease;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(2.5rem, 5.56vw, 5rem); /* 80px @ 1440px */
+}
+
+.nav-links {
+  display: flex;
+  gap: clamp(1rem, 2vw, 2.5rem);
+}
+
+.nav-link {
+  font-size: var(--text-nav);
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.45;
+  transition: opacity 0.3s ease, color 0.6s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.7;
+}
+
+.nav-link.active {
+  opacity: 1;
+}
+
+.nav-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+}
+
+/* ─── Sections ─────────────────────────────── */
+.section {
+  height: 100svh;
+  scroll-snap-align: start;
+  padding: 6vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#work.section,
+#contact.section {
+  height: auto;
+  padding-top: max(5rem, 10vw);
+  min-height: 100svh;
+}
+
+.section-inner {
+  width: 100%;
+}
+
+.section-title {
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 40%;
+  margin-bottom: clamp(3rem, 7vw, 8rem);
+}
+
+/* ─── Work: table layout ────────────────────── */
+.work-table {
+  width: 100%;
+}
+
+.work-row {
+  display: flex;
+  align-items: flex-start;
+  border-top: 1px solid #2c2c2c;
+  padding-top: 24px;
+  padding-bottom: 72px;
+  cursor: none;
+
+  /* ── Compressão no hover ─────────────────────────────────────────────
+   * Reduz o gap entre colunas no hover, dando organicidade à interação.
+   * Ajuste "gap normal" e "gap hover" conforme preferir (0–20% de diff).
+   * ------------------------------------------------------------------ */
+  gap: 6vw;                                  /* ← gap normal             */
+  transition: gap 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.work-row:hover {
+  gap: 5vw;                                  /* ← gap no hover (~−30%)   */
+}
+
+.work-date,
+.work-company {
+  flex-shrink: 0;
+  font-family: 'Delight', sans-serif;
+  line-height: 24px;
+  width: 10%;
+}
+
+.work-date    { font-size: 16px; color: #a3a3a3; }
+.work-company { font-size: 24px; color: var(--color-cream); }
+
+.work-products {
+  width: 10%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: 'Delight', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.work-label        { color: #a3a3a3; }
+.work-product-list { color: var(--color-cream); }
+
+.work-desc {
+  width: 50%;       /* largura fixa — não muda no hover, só o gap diminui */
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.work-body {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 24px;
+  line-height: 36px;
+  color: var(--color-cream);
+}
+
+/* ─── Hero ─────────────────────────────────── */
+.section[data-bg="hero"] {
+  padding-top: 6vw;
+}
+
+.hero-content {
+  max-width: 80%;
+}
+
+.hero-text {
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.accent {
+  color: var(--color-green);
+  transition: color 0.6s ease;
+}
+
+/* ─── About ────────────────────────────────── */
+.about-text {
+  font-size: var(--text-md);
+  font-weight: 300;
+  line-height: 1.21;
+  max-width: 85%;
+}
+
+.about-text strong {
+  font-weight: 900;
+}
+
+
+/* ─── About: custom cursor ─────────────────── */
+#about {
+  cursor: none;
+}
+
+/* ── Cursor customizado ────────────────────────────────────────────────────
+ * --cursor-bg  → cor de fundo (definida via JS por row/seção)
+ * --cursor-fg  → cor do texto (definida via JS)
+ * Aparece com fade + leve escala. Transição de cor é suave entre rows.
+ * ----------------------------------------------------------------------- */
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+
+  background: var(--cursor-bg, var(--color-dark));
+  color:      var(--cursor-fg, var(--color-cream));
+
+  /* aparição: fade + pequena escala */
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+
+  /* ↓ ajuste durações de animação aqui se necessário             */
+  transition:
+    opacity          0.1s  ease,
+    transform        0.1s  ease,
+    background-color 0.15s  ease;   /* troca suave ao mover entre rows */
+}
+
+.cursor-label.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ── Ícones ── */
+.cursor-label .icon-x            { display: none; }
+.cursor-label .icon-copy         { display: none; }
+.cursor-label .icon-arrow-up-right { display: none; }
+
+/* Estado "go back" (overlay about) */
+.cursor-label.go-back .icon-arrow { display: none; }
+.cursor-label.go-back .icon-x     { display: block; }
+
+/* Estado "case-study" (rows do work) — usa --cursor-bg/fg via JS */
+.cursor-label.case-study {
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+/* Estado "contact-email" — copia email */
+.cursor-label.contact-email .icon-arrow { display: none; }
+.cursor-label.contact-email .icon-copy  { display: block; }
+
+/* Estado "contact-link" — abre link externo */
+.cursor-label.contact-link .icon-arrow            { display: none; }
+.cursor-label.contact-link .icon-arrow-up-right   { display: block; }
+
+/* Estado "contact-copied" — feedback após copiar email (sem ícone) */
+.cursor-label.contact-copied .icon-arrow          { display: none; }
+
+
+/* ─── More overlay ──────────────────────────── */
+.more-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-dark);
+  z-index: 100;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  cursor: none;
+}
+
+.more-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.more-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* ~38vw cada coluna com padding 8vw + gap 8vw */
+  gap: 8vw;
+  padding: 8vw;
+  padding-bottom: 16vw;
+  align-items: start;
+}
+
+/* ─── Left: texto fixo enquanto direita scrolls ── */
+.more-left {
+  position: relative; /* JS controla o freeze via translateY */
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.more-title {
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1.333;
+  color: var(--color-cream);
+  letter-spacing: -0.18px;
+}
+
+.more-title-bold {
+  font-weight: 900; /* Delight Black */
+}
+
+.more-bio {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  color: #969696;
+  font-feature-settings: 'liga' 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ─── Right: scrolling photos ────────────────── */
+.more-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14rem;
+  padding-top: clamp(16rem, 32vw, 30rem); /* começa abaixo do texto esquerdo */
+}
+
+/* Each photo + caption pair */
+.more-photo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.more-photo-item img {
+  display: block;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.more-caption {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-cream);
+  text-align: right;
+}
+
+/*
+  Casual displacement — deslocamento proposital das fotos.
+  Ajuste width e align-self conforme necessário.
+  As imagens são exportadas em 2x, então os width aqui são o tamanho de exibição real.
+*/
+/* working.png */
+.more-photo-item:nth-child(1) { align-self: flex-end; }
+.more-photo-item:nth-child(1) img { width: 200px; }
+
+/* verymillenialofme.png */
+.more-photo-item:nth-child(2) { align-self: flex-end; }
+.more-photo-item:nth-child(2) img { width: 160px; }
+
+/* certified.png */
+.more-photo-item:nth-child(3) { align-self: flex-start; }
+.more-photo-item:nth-child(3) img { width: 220px; }
+
+/* thatoneshot.png */
+.more-photo-item:nth-child(4) { align-self: flex-start; }
+.more-photo-item:nth-child(4) img { width: 140px; }
+
+/* stilllearning.png */
+.more-photo-item:nth-child(5) { align-self: flex-start; }
+.more-photo-item:nth-child(5) img { width: 210px; }
+
+/* notadeskday.png */
+.more-photo-item:nth-child(6) { align-self: flex-end; }
+.more-photo-item:nth-child(6) img { width: 170px; }
+
+/* thisstays.png */
+.more-photo-item:nth-child(7) { align-self: flex-start; }
+.more-photo-item:nth-child(7) img { width: 220px; }
+
+
+/* ─── Contact: table layout ─────────────────── */
+.contact-title {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--color-cream);
+  max-width: none;
+  margin-bottom: clamp(3rem, 7vw, 8rem);
+}
+
+.contact-table {
+  width: 100%;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  padding-top: 24px;
+  padding-bottom: 24px;
+  cursor: none;
+}
+
+.contact-row:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.contact-row-text {
+  font-family: 'Delight', sans-serif;
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-cream);
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.contact-row-text strong {
+  font-weight: 900;
+}
+
+.contact-row:hover .contact-row-text {
+  transform: translateX(1.5vw);
+}
+
+/* ─── Responsive ───────────────────────────── */
+@media (max-width: 768px) {
+  .section {
+    padding: 12vw 6vw;
+    min-height: 100svh;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .about-text {
+    max-width: 100%;
+  }
+
+  .entry {
+    grid-template-columns: 1fr;
+  }
+
+  .entry-image {
+    order: -1;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .section-title {
+    hyphens: auto;
+  }
+}
