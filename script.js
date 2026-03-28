@@ -81,12 +81,24 @@ function openOverlay() {
   moreOverlay.scrollTop = 0;
   document.querySelector('.nav').style.display = 'none';
   hideCursor();
+
+  // Trigger title letter-by-letter reveal animation
+  const titleEl = moreOverlay.querySelector('.more-title--animated');
+  if (titleEl) {
+    titleEl.classList.remove('title-revealed');
+    void titleEl.offsetWidth; // force reflow so animation restarts
+    titleEl.classList.add('title-revealed');
+  }
 }
 
 // ── Close overlay ───────────────────────────────────────────────────────────
 function closeOverlay() {
   moreOverlay.classList.remove('visible');
   document.querySelector('.nav').style.display = '';
+
+  // Reset title animation so it plays again next open
+  const titleEl = moreOverlay.querySelector('.more-title--animated');
+  if (titleEl) titleEl.classList.remove('title-revealed');
 }
 
 aboutSection.addEventListener('click', openOverlay);

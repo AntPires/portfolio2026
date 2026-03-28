@@ -393,21 +393,19 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 /* ── X close button (sempre visível, canto superior direito) ── */
 .more-close {
   position: fixed;
-  top: clamp(2.5rem, 5.56vw, 5rem);
-  right: clamp(2.5rem, 5.56vw, 5rem);
-  width: 48px;
-  height: 48px;
+  top: clamp(1.25rem, 2.5vw, 2.25rem); /* mais acima — ~36px ref */
+  right: var(--mo-margin, 8.33vw);
+  width: 32px;
+  height: 32px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--color-cream);
   opacity: 0.45;
   transition: opacity 0.25s ease;
-  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 201;
-    /* visível apenas quando overlay está aberto (JS controla via overlay.visible) */
   display: none;
 }
 
@@ -435,24 +433,62 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   padding-bottom: var(--mo-gap);
 }
 
-/* ── Title (centrado: começa em 25vw, largura 50vw) ── */
+/* ── Title block: full-width com margens ── */
 .more-block--title {
+  margin-left: var(--mo-margin);
+  width: calc(100% - 2 * var(--mo-margin));
+}
+
+/* Final text: override para centralizado, 50vw */
+.more-block--final {
   margin-left: 25vw;
   width: 50vw;
 }
 
 .more-title {
-  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  font-size: clamp(2rem, 4.167vw, 3.75rem); /* 60px ref */
   font-weight: 300;
-  line-height: 1.333;
+  line-height: 1.2;
+  text-indent: 1.5em;
   color: var(--color-cream);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.3px;
+  text-align: left;
+}
+
+/* Só o texto final fica centralizado */
+.more-block--final .more-title {
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem); /* 36px ref — não mudou */
+  line-height: 1.333;
+  letter-spacing: -0.18px;
   text-align: center;
+  text-indent: 0;
 }
 
 .more-title-serif {
   font-family: 'Hedvig Letters Serif', serif;
   font-weight: 400;
+  color: var(--color-green);
+}
+
+/* ── Title animation (letter-by-letter clip reveal) ── */
+@keyframes titleReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0%   0 0); }
+}
+
+.more-title--animated {
+  clip-path: inset(0 100% 0 0);
+}
+
+.more-title--animated.title-revealed {
+  animation: titleReveal 0.7s steps(100, end) both;
+  animation-delay: 0.15s;
+}
+
+/* Espaço extra após o título — leitor rola mais até o primeiro parágrafo */
+.more-block--title + .more-block--col1,
+.more-block--title + .more-block--col3 {
+  margin-top: calc(var(--mo-gap) * 1.8);
 }
 
 /* ── Bio text (col 1 ou col 3, sempre 4 colunas largas) ── */
@@ -542,12 +578,15 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   width: 100%;
 }
 
+/* ── Career: header e body usam gap de 11% para alinhar com as entries ──
+ *   Figma: left=588/1200=49%, gap=132/1200=11%, right=480/1200=40%
+ * ─────────────────────────────────────────────────────────────────────── */
 .more-career-header {
   display: flex;
   align-items: baseline;
+  gap: 11%;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  margin-bottom: 0;
 }
 
 .more-career-label {
@@ -562,8 +601,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .more-career-cols {
   display: flex;
-  gap: 0;
-  width: 51%;
+  width: 40%;
+  flex-shrink: 0;
 }
 
 .more-career-col-head {
@@ -578,8 +617,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-career-body {
   display: flex;
   align-items: flex-start;
+  gap: 11%;
   padding-top: 16px;
-  gap: 2%;
 }
 
 .more-career-bio {
@@ -593,7 +632,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-career-list {
-  width: 51%;
+  width: 40%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
 }
@@ -613,15 +653,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-career-role {
   width: 50%;
   font-family: 'Delight', sans-serif;
-  font-size: 12px;
+  font-size: 14px;  /* 12px → 14px (atualizado no Figma) */
   font-weight: 300;
   line-height: 24px;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
-}
-
-.more-career-role {
-  color: var(--color-cream);
 }
 
 .more-career-row:first-child {
