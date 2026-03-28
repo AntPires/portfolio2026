@@ -50,6 +50,7 @@ navLinks.forEach((link) => {
 // ─── About: custom cursor + More overlay ─────
 const aboutSection = document.getElementById('about');
 const moreOverlay  = document.getElementById('more-overlay');
+const moreClose    = document.getElementById('more-close');
 const cursorLabel  = document.getElementById('cursor-label');
 const cursorText   = cursorLabel.querySelector('.cursor-label-text');
 
@@ -58,20 +59,11 @@ function placeCursor(e) {
   cursorLabel.style.top  = e.clientY + 'px';
 }
 
-// state: '' | 'go-back'
-// Para 'case-study' os cursores são definidos diretamente via rowCursors.
 function showCursor(text, state = '') {
   cursorText.textContent = text;
   cursorLabel.className = 'cursor-label visible' + (state ? ` ${state}` : '');
-
-  // Define cores via custom properties para aproveitar a transition CSS
-  if (state === 'go-back') {
-    cursorLabel.style.setProperty('--cursor-bg', 'var(--color-green)');
-    cursorLabel.style.setProperty('--cursor-fg', 'var(--color-dark)');
-  } else {
-    cursorLabel.style.setProperty('--cursor-bg', 'var(--color-dark)');
-    cursorLabel.style.setProperty('--cursor-fg', 'var(--color-cream)');
-  }
+  cursorLabel.style.setProperty('--cursor-bg', 'var(--color-dark)');
+  cursorLabel.style.setProperty('--cursor-fg', 'var(--color-cream)');
 }
 
 function hideCursor() {
@@ -83,46 +75,28 @@ aboutSection.addEventListener('mousemove',  placeCursor);
 aboutSection.addEventListener('mouseenter', () => showCursor('find out more'));
 aboutSection.addEventListener('mouseleave', hideCursor);
 
-// ─── More overlay: scroll left column until fully visible, then freeze ────
-const moreLeft = document.querySelector('.more-left');
-
-function onMoreScroll() {
-  const scrollTop    = moreOverlay.scrollTop;
-  const textHeight   = moreLeft.offsetHeight;
-  const viewportH    = moreOverlay.clientHeight;
-  const paddingPx    = parseFloat(getComputedStyle(moreLeft.parentElement).paddingTop);
-
-  // Amount the text needs to travel before becoming fully visible:
-  // text bottom starts at paddingPx + textHeight; should reach viewportH - paddingPx
-  const maxScroll = Math.max(0, textHeight + 2 * paddingPx - viewportH);
-
-  // Counter-scroll once threshold passed: element stays put
-  const offset = Math.max(0, scrollTop - maxScroll);
-  moreLeft.style.transform = offset > 0 ? `translateY(${offset}px)` : '';
+// ── Open overlay ────────────────────────────────────────────────────────────
+function openOverlay() {
+  moreOverlay.classList.add('visible');
+  moreOverlay.scrollTop = 0;
+  document.querySelector('.nav').style.display = 'none';
+  hideCursor();
 }
 
-// Open overlay on click
-aboutSection.addEventListener('click', () => {
-  moreOverlay.classList.add('visible');
-  document.querySelector('.nav').style.display = 'none';
-  showCursor('go back', 'go-back');
-  moreOverlay.scrollTop = 0;
-  moreLeft.style.transform = '';
-  moreOverlay.addEventListener('scroll', onMoreScroll);
-});
-
-// Cursor in More overlay
-moreOverlay.addEventListener('mousemove',  placeCursor);
-moreOverlay.addEventListener('mouseenter', () => showCursor('go back', 'go-back'));
-moreOverlay.addEventListener('mouseleave', hideCursor);
-
-// Close overlay on click
-moreOverlay.addEventListener('click', () => {
+// ── Close overlay ───────────────────────────────────────────────────────────
+function closeOverlay() {
   moreOverlay.classList.remove('visible');
-  moreOverlay.removeEventListener('scroll', onMoreScroll);
-  moreLeft.style.transform = '';
   document.querySelector('.nav').style.display = '';
-  hideCursor();
+}
+
+aboutSection.addEventListener('click', openOverlay);
+moreClose.addEventListener('click', closeOverlay);
+
+// Fechar também com Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && moreOverlay.classList.contains('visible')) {
+    closeOverlay();
+  }
 });
 
 // ─── Work rows: cursor variável por empresa ────────────────────────────────

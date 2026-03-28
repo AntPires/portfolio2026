@@ -147,11 +147,6 @@
       <line x1="5" y1="12" x2="19" y2="12"></line>
       <polyline points="12 5 19 12 12 19"></polyline>
     </svg>
-    <!-- X (go back) -->
-    <svg class="icon-x" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
     <!-- Copy (email row) -->
     <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -166,55 +161,158 @@
 
   <!-- More overlay -->
   <div id="more-overlay" class="more-overlay" role="dialog" aria-modal="true">
-    <div class="more-inner">
 
-      <!-- Left: sticky text -->
-      <div class="more-left">
-        <p class="more-title">Becoming a designer was the best way to keep up with a mind that's constantly looking for <strong class="more-title-bold">how things could work better</strong>.</p>
-        <div class="more-bio">
-          <p>Born in Rio, grew up on that version of the internet where people shared work freely, forked each other's ideas, and built things together just because they could. That spirit never left me. I still put my photos on Unsplash for anyone to use. I've shared 3D files, left repos open, contributed to things I'd never be credited for. I think that's just how making things should work.</p>
-          <p>I get curious about most things.</p>
-          <p>Typography. Photography. Behavioral economics. Why people make the decisions they make — and why they think they made them for different reasons. How businesses scale. How teams break down. How a design system holds up two years after the designer who built it is gone.</p>
-          <p>I care about the business side as much as the craft. Maybe more than most designers admit.</p>
-          <p>Over the years, I've worked on consumer products at national scale — broadcast, banking, telecom. Millions of people, every day. That kind of reach teaches you to think carefully before you ship.</p>
-          <p>But more than scale, what drives me is access.</p>
-          <p>I want to live in a world where anyone with a phone or a laptop can reach the best products and opportunities. That's what makes the work feel like it matters.</p>
-        </div>
-      </div>
+    <!-- Fixed close button -->
+    <button id="more-close" class="more-close" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
 
-      <!-- Right: scrolling photos (casually offset) -->
-      <div class="more-right">
+    <!-- Title (centered) -->
+    <div class="more-block more-block--title">
+      <p class="more-title">Becoming a designer was the best way to keep up with a mind that's constantly looking for <span class="more-title-serif">how things could work better</span>.</p>
+    </div>
+
+    <!-- Bio 1 — col 1 -->
+    <div class="more-block more-block--col1">
+      <p class="more-bio">Born in Rio, I grew up on that version of the internet where people shared work freely, forked each other's ideas, and built things together just because they could. That spirit never left me. I still upload high-res photos for anyone to use. I've shared 3D files, left repos open, contributed to things I'd never be credited for. I think that's just how making things should work.</p>
+    </div>
+
+    <!-- Photo rail 1 -->
+    <div class="more-block more-block--rail">
+      <div class="more-rail rail-1">
         <div class="more-photo-item">
           <img src="img/working.png" alt="">
           <span class="more-caption">working with great people &lt;3</span>
-        </div>
-        <div class="more-photo-item">
-          <img src="img/verymillenialofme.png" alt="">
-          <span class="more-caption">very millennial of me</span>
-        </div>
-        <div class="more-photo-item">
-          <img src="img/certified.png" alt="">
-          <span class="more-caption">certified brazillian™</span>
-        </div>
-        <div class="more-photo-item">
-          <img src="img/thatoneshot.png" alt="">
-          <span class="more-caption">just after that one shot</span>
-        </div>
-        <div class="more-photo-item">
-          <img src="img/stilllearning.png" alt="">
-          <span class="more-caption">still learning from her</span>
         </div>
         <div class="more-photo-item">
           <img src="img/notadeskday.png" alt="">
           <span class="more-caption">not a desk day</span>
         </div>
         <div class="more-photo-item">
+          <img src="img/verymillenial.png" alt="">
+          <span class="more-caption">very millennial of me</span>
+        </div>
+        <div class="more-photo-item">
           <img src="img/thisstays.png" alt="">
           <span class="more-caption">"this stays"</span>
         </div>
       </div>
-
     </div>
+
+    <!-- Bio 2 — col 3 -->
+    <div class="more-block more-block--col3">
+      <p class="more-bio">I get curious about most things.</p>
+      <p class="more-bio">Typography. Photography. Behavioral economics. Why people make the decisions they make (and why they think they made them for different reasons). How businesses scale. How teams break down. How a design system holds up two years after the designer who built it is gone.</p>
+    </div>
+
+    <!-- Bio 3 — col 1 -->
+    <div class="more-block more-block--col1">
+      <p class="more-bio">I care about the business side as much as the craft. Maybe more than most designers admit.</p>
+      <p class="more-bio">Over the years, I've worked on consumer products at national scale: broadcast, banking, telecom. Millions of people, every day. That kind of reach teaches you to think carefully before you ship.</p>
+    </div>
+
+    <!-- Career section -->
+    <div class="more-block more-block--rail">
+      <div class="more-career">
+        <div class="more-career-header">
+          <span class="more-career-label">Career</span>
+          <div class="more-career-cols">
+            <span class="more-career-col-head">Where</span>
+            <span class="more-career-col-head">Main role</span>
+          </div>
+        </div>
+        <div class="more-career-body">
+          <div class="more-career-bio">
+            <p>I've spent years designing digital products. I've also washed dishes in New Jersey. Both taught me something useful.</p>
+          </div>
+          <div class="more-career-list">
+            <div class="more-career-row">
+              <span class="more-career-company">Wave by Bemobi</span>
+              <span class="more-career-role">Lead Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Mosaico</span>
+              <span class="more-career-role">Design Specialist</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Globo</span>
+              <span class="more-career-role">Senior Product Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Stone</span>
+              <span class="more-career-role">Product Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Oi</span>
+              <span class="more-career-role">Product Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Profite</span>
+              <span class="more-career-role">UX Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Agência Kindle</span>
+              <span class="more-career-role">UX Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">LEO Learning</span>
+              <span class="more-career-role">UX Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Lego Branding</span>
+              <span class="more-career-role">Branding Designer</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Marriott, Princeton NJ</span>
+              <span class="more-career-role">Waiter, bartender, cook</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">Medgrupo</span>
+              <span class="more-career-role">Architecture Intern</span>
+            </div>
+            <div class="more-career-row">
+              <span class="more-career-company">32 Bits</span>
+              <span class="more-career-role">Design Intern</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo rail 2 -->
+    <div class="more-block more-block--rail">
+      <div class="more-rail rail-2">
+        <div class="more-photo-item">
+          <img src="img/stilllearning.png" alt="">
+          <span class="more-caption">still learning from her</span>
+        </div>
+        <div class="more-photo-item">
+          <img src="img/afterthatoneshot.png" alt="">
+          <span class="more-caption">just after that one shot</span>
+        </div>
+        <div class="more-photo-item">
+          <img src="img/certifiedbrazillian.png" alt="">
+          <span class="more-caption">certified brazillian™</span>
+        </div>
+        <div class="more-photo-item">
+          <img src="img/notadeskday2.png" alt="">
+          <span class="more-caption">not a desk day (2)</span>
+        </div>
+        <div class="more-photo-item">
+          <img src="img/culturedtravaller.png" alt="">
+          <span class="more-caption">"cultured traveller"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final text (centered) -->
+    <div class="more-block more-block--title more-block--final">
+      <p class="more-title"><span class="more-title-serif">More than scale, what drives me is access.</span><br><br>I want to live in a world where anyone with a phone or a laptop can reach the best products and opportunities. That's what makes the work feel like it matters.</p>
+    </div>
+
   </div>
 
   <script src="script.js"></script>

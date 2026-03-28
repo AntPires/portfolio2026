@@ -323,15 +323,12 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   background: var(--cursor-bg, var(--color-dark));
   color:      var(--cursor-fg, var(--color-cream));
 
-  /* aparição: fade + pequena escala */
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.85);
-
-  /* ↓ ajuste durações de animação aqui se necessário             */
   transition:
     opacity          0.1s  ease,
     transform        0.1s  ease,
-    background-color 0.15s  ease;   /* troca suave ao mover entre rows */
+    background-color 0.15s  ease;
 }
 
 .cursor-label.visible {
@@ -340,15 +337,10 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 /* ── Ícones ── */
-.cursor-label .icon-x            { display: none; }
 .cursor-label .icon-copy         { display: none; }
 .cursor-label .icon-arrow-up-right { display: none; }
 
-/* Estado "go back" (overlay about) */
-.cursor-label.go-back .icon-arrow { display: none; }
-.cursor-label.go-back .icon-x     { display: block; }
-
-/* Estado "case-study" (rows do work) — usa --cursor-bg/fg via JS */
+/* Estado "case-study" (rows do work) */
 .cursor-label.case-study {
   text-transform: none;
   letter-spacing: 0.04em;
@@ -366,17 +358,31 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .cursor-label.contact-copied .icon-arrow          { display: none; }
 
 
-/* ─── More overlay ──────────────────────────── */
+/* ─── More overlay ──────────────────────────────────────────────────────────
+ *
+ * Grid de 8 colunas ref: 1440px, margem: 120px (8.33vw), gutter: 24px
+ * Textos sempre 4 colunas largas (588px = 40.83vw).
+ * Espaçamento vertical entre blocos: 320px ref = 22.22vw com clamp.
+ *
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/* Variáveis locais do overlay */
 .more-overlay {
+  --mo-margin:   8.33vw;         /* 120/1440 — margem lateral */
+  --mo-gap:      clamp(5rem, 22.22vw, 20rem); /* 320px ref */
+  --mo-col4:     40.83vw;        /* 588/1440 — largura de 4 colunas */
+  --mo-col1:     var(--mo-margin);             /* onde começa col 1 */
+  --mo-col3:     29.58vw;        /* 426/1440 — onde começa col 3 */
+  --mo-photo-h:  clamp(8rem, 17.5vw, 15rem);  /* 252px ref */
+
   position: fixed;
   inset: 0;
   background: var(--color-dark);
-  z-index: 100;
+  z-index: 200;
   overflow-y: auto;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
-  cursor: none;
+  transition: opacity 0.5s ease;
 }
 
 .more-overlay.visible {
@@ -384,57 +390,111 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   pointer-events: all;
 }
 
-.more-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* ~38vw cada coluna com padding 8vw + gap 8vw */
-  gap: 8vw;
-  padding: 8vw;
-  padding-bottom: 16vw;
-  align-items: start;
+/* ── X close button (sempre visível, canto superior direito) ── */
+.more-close {
+  position: fixed;
+  top: clamp(2.5rem, 5.56vw, 5rem);
+  right: clamp(2.5rem, 5.56vw, 5rem);
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-cream);
+  opacity: 0.45;
+  transition: opacity 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 201;
+    /* visível apenas quando overlay está aberto (JS controla via overlay.visible) */
+  display: none;
 }
 
-/* ─── Left: texto fixo enquanto direita scrolls ── */
-.more-left {
-  position: relative; /* JS controla o freeze via translateY */
+.more-overlay.visible .more-close {
   display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+}
+
+.more-close:hover {
+  opacity: 1;
+}
+
+/* ── Blocos de conteúdo ── */
+.more-block {
+  margin-top: var(--mo-gap);
+}
+
+/* Primeiro bloco: padding-top ao invés de margin-top */
+.more-block:first-of-type {
+  margin-top: 0;
+  padding-top: var(--mo-gap);
+}
+
+/* Último bloco: padding-bottom generoso */
+.more-block:last-of-type {
+  padding-bottom: var(--mo-gap);
+}
+
+/* ── Title (centrado: começa em 25vw, largura 50vw) ── */
+.more-block--title {
+  margin-left: 25vw;
+  width: 50vw;
 }
 
 .more-title {
-  font-size: 36px;
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
   font-weight: 300;
   line-height: 1.333;
   color: var(--color-cream);
-  letter-spacing: -0.18px;
+  letter-spacing: -0.01em;
+  text-align: center;
 }
 
-.more-title-bold {
-  font-weight: 900; /* Delight Black */
+.more-title-serif {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-weight: 400;
+}
+
+/* ── Bio text (col 1 ou col 3, sempre 4 colunas largas) ── */
+.more-block--col1 {
+  margin-left: var(--mo-col1);
+  width: var(--mo-col4);
+}
+
+.more-block--col3 {
+  margin-left: var(--mo-col3);
+  width: var(--mo-col4);
 }
 
 .more-bio {
   font-family: 'Hedvig Letters Serif', serif;
-  font-size: 16px;
+  font-size: clamp(1.25rem, 1.667vw, 1.5rem); /* 24px ref */
   font-weight: 400;
-  line-height: 26px;
-  color: #969696;
+  line-height: 1.5;
+  color: var(--color-cream);
   font-feature-settings: 'liga' 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
-/* ─── Right: scrolling photos ────────────────── */
-.more-right {
-  display: flex;
-  flex-direction: column;
-  gap: 14rem;
-  padding-top: clamp(16rem, 32vw, 30rem); /* começa abaixo do texto esquerdo */
+/* Gap entre parágrafos consecutivos dentro do mesmo bloco */
+.more-bio + .more-bio {
+  margin-top: 1.5rem;
 }
 
-/* Each photo + caption pair */
+/* ── Photo rails (full-width com margens) ── */
+.more-block--rail {
+  margin-left: var(--mo-margin);
+  margin-right: var(--mo-margin);
+  width: calc(100% - 2 * var(--mo-margin));
+}
+
+.more-rail {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* ── Each photo + caption ── */
 .more-photo-item {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -442,6 +502,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .more-photo-item img {
   display: block;
+  width: 100%;
+  height: var(--mo-photo-h);
   border-radius: 4px;
   object-fit: cover;
 }
@@ -449,43 +511,127 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-caption {
   font-family: 'Hedvig Letters Serif', serif;
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.5;
   color: var(--color-cream);
   text-align: right;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-/*
-  Casual displacement — deslocamento proposital das fotos.
-  Ajuste width e align-self conforme necessário.
-  As imagens são exportadas em 2x, então os width aqui são o tamanho de exibição real.
-*/
-/* working.png */
-.more-photo-item:nth-child(1) { align-self: flex-end; }
-.more-photo-item:nth-child(1) img { width: 200px; }
+.more-photo-item:hover .more-caption {
+  opacity: 1;
+}
 
-/* verymillenialofme.png */
-.more-photo-item:nth-child(2) { align-self: flex-end; }
-.more-photo-item:nth-child(2) img { width: 160px; }
+/* ── Rail 1: 380 / 180 / 380 / 180 (gap ~26.67px = 1.85vw) ── */
+.rail-1 { gap: 1.85vw; }
+.rail-1 .more-photo-item:nth-child(1) { width: 26.39vw; }
+.rail-1 .more-photo-item:nth-child(2) { width: 12.5vw;  }
+.rail-1 .more-photo-item:nth-child(3) { width: 26.39vw; }
+.rail-1 .more-photo-item:nth-child(4) { width: 12.5vw;  }
 
-/* certified.png */
-.more-photo-item:nth-child(3) { align-self: flex-start; }
-.more-photo-item:nth-child(3) img { width: 220px; }
+/* ── Rail 2: 240 / 240 / 240 / 180 / 180 (gap 30px = 2.08vw) ── */
+.rail-2 { gap: 2.08vw; }
+.rail-2 .more-photo-item:nth-child(1) { width: 16.67vw; }
+.rail-2 .more-photo-item:nth-child(2) { width: 16.67vw; }
+.rail-2 .more-photo-item:nth-child(3) { width: 16.67vw; }
+.rail-2 .more-photo-item:nth-child(4) { width: 12.5vw;  }
+.rail-2 .more-photo-item:nth-child(5) { width: 12.5vw;  }
 
-/* thatoneshot.png */
-.more-photo-item:nth-child(4) { align-self: flex-start; }
-.more-photo-item:nth-child(4) img { width: 140px; }
+/* ── Career section ── */
+.more-career {
+  width: 100%;
+}
 
-/* stilllearning.png */
-.more-photo-item:nth-child(5) { align-self: flex-start; }
-.more-photo-item:nth-child(5) img { width: 210px; }
+.more-career-header {
+  display: flex;
+  align-items: baseline;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 0;
+}
 
-/* notadeskday.png */
-.more-photo-item:nth-child(6) { align-self: flex-end; }
-.more-photo-item:nth-child(6) img { width: 170px; }
+.more-career-label {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-cream);
+  font-feature-settings: 'liga' 0;
+  width: 49%;
+  flex-shrink: 0;
+}
 
-/* thisstays.png */
-.more-photo-item:nth-child(7) { align-self: flex-start; }
-.more-photo-item:nth-child(7) img { width: 220px; }
+.more-career-cols {
+  display: flex;
+  gap: 0;
+  width: 51%;
+}
+
+.more-career-col-head {
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-cream);
+  font-feature-settings: 'liga' 0;
+  width: 50%;
+}
+
+.more-career-body {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 16px;
+  gap: 2%;
+}
+
+.more-career-bio {
+  width: 49%;
+  flex-shrink: 0;
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: clamp(1.25rem, 1.667vw, 1.5rem); /* 24px ref */
+  line-height: 1.5;
+  color: var(--color-cream);
+  font-feature-settings: 'liga' 0;
+}
+
+.more-career-list {
+  width: 51%;
+  display: flex;
+  flex-direction: column;
+}
+
+.more-career-row {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 12px 0;
+}
+
+.more-career-row:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.more-career-company,
+.more-career-role {
+  width: 50%;
+  font-family: 'Delight', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 24px;
+  color: var(--color-cream);
+  font-feature-settings: 'liga' 0;
+}
+
+.more-career-role {
+  color: var(--color-cream);
+}
+
+.more-career-row:first-child {
+  border-top: none;
+}
+
+/* ── Final text (mesma posição do título: centrado, 50vw) ── */
+.more-block--final {
+  /* herda .more-block--title */
+}
 
 
 /* ─── Contact: table layout ─────────────────── */
