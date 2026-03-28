@@ -75,6 +75,107 @@ aboutSection.addEventListener('mousemove',  placeCursor);
 aboutSection.addEventListener('mouseenter', () => showCursor('find out more'));
 aboutSection.addEventListener('mouseleave', hideCursor);
 
+// ─── Title: line-by-line reveal ──────────────────────────────────────────────
+//
+// Because line-breaks depend on the viewport, we detect them at runtime:
+//   1. Expand the title into one <span> per word (preserving child elements
+//      like the green serif span)
+//   2. Group words by their getBoundingClientRect().top → each group = 1 line
+//   3. Rebuild the title as:
+//        <div class="_tl-wrap">            ← overflow:hidden per line
+//          <span class="_tl">…words…</span>← animated clip-path
+//        </div>
+//   4. Each ._tl gets a staggered CSS animation via inline style
+//
+// On close we restore the original HTML so the next open starts fresh.
+// ─────────────────────────────────────────────────────────────────────────────
+const titleAnimEl  = moreOverlay.querySelector('.more-title--animated');
+const titleOrigHTML = titleAnimEl ? titleAnimEl.innerHTML : null;
+
+function buildAndPlayTitleLines() {
+  if (!titleAnimEl || !titleOrigHTML) return;
+
+  // Restore original markup (handles re-opens)
+  titleAnimEl.innerHTML = titleOrigHTML;
+  // Remove the "keep hidden" clip so we can measure correctly
+  titleAnimEl.style.clipPath = 'none';
+
+  // ── Step 1: expand all direct children into word-level spans ──────────────
+  const origNodes = Array.from(titleAnimEl.childNodes);
+  titleAnimEl.innerHTML = '';
+
+  origNodes.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      // plain text → split by spaces
+      node.textContent.split(' ').forEach((word, i, arr) => {
+        if (!word) return;
+        const s = document.createElement('span');
+        s.className = '_tw';
+        s.textContent = word;
+        titleAnimEl.appendChild(s);
+        if (i < arr.length - 1) titleAnimEl.appendChild(document.createTextNode(' '));
+      });
+    } else {
+      // element (e.g. .more-title-serif) → clone per word to keep classes/styles
+      node.textContent.split(' ').forEach((word, i, arr) => {
+        if (!word) return;
+        const clone = node.cloneNode(false);
+        clone.textContent = word;
+        titleAnimEl.appendChild(clone);
+        if (i < arr.length - 1) titleAnimEl.appendChild(document.createTextNode(' '));
+      });
+    }
+  });
+
+  // ── Step 2: group words by line (same getBoundingClientRect top) ───────────
+  const wordEls = Array.from(titleAnimEl.querySelectorAll('._tw, .more-title-serif'));
+  const lines   = [];
+
+  wordEls.forEach(w => {
+    const top  = Math.round(w.getBoundingClientRect().top);
+    const last = lines[lines.length - 1];
+    if (!last || Math.abs(top - last.top) > 4) {
+      lines.push({ top, nodes: [w] });
+    } else {
+      last.nodes.push(w);
+    }
+  });
+
+  // ── Step 3: rebuild as animated line containers ────────────────────────────
+  titleAnimEl.innerHTML = '';
+
+  const DURATION   = 0.45;  // seconds per line reveal
+  const STEPS      = 55;    // discrete steps (sub-character feel)
+  const LINE_DELAY = 0.11;  // seconds between lines
+
+  lines.forEach((line, i) => {
+    const wrap  = document.createElement('div');
+    wrap.className = '_tl-wrap';
+    // First line keeps the CSS text-indent; subsequent lines reset it
+    if (i > 0) wrap.style.textIndent = '0';
+
+    const inner = document.createElement('span');
+    inner.className = '_tl';
+    inner.style.animation =
+      `titleLineReveal ${DURATION}s steps(${STEPS}, end) ${i * LINE_DELAY}s both`;
+
+    line.nodes.forEach((w, wi) => {
+      inner.appendChild(w);
+      if (wi < line.nodes.length - 1) inner.appendChild(document.createTextNode(' '));
+    });
+
+    wrap.appendChild(inner);
+    titleAnimEl.appendChild(wrap);
+  });
+}
+
+function resetTitleAnimation() {
+  if (titleAnimEl && titleOrigHTML !== null) {
+    titleAnimEl.innerHTML = titleOrigHTML;
+    titleAnimEl.style.clipPath = '';
+  }
+}
+
 // ── Open overlay ────────────────────────────────────────────────────────────
 function openOverlay() {
   moreOverlay.classList.add('visible');
@@ -82,23 +183,16 @@ function openOverlay() {
   document.querySelector('.nav').style.display = 'none';
   hideCursor();
 
-  // Trigger title letter-by-letter reveal animation
-  const titleEl = moreOverlay.querySelector('.more-title--animated');
-  if (titleEl) {
-    titleEl.classList.remove('title-revealed');
-    void titleEl.offsetWidth; // force reflow so animation restarts
-    titleEl.classList.add('title-revealed');
-  }
+  // rAF ensures the overlay is painted (opacity transition started) before
+  // we measure getBoundingClientRect for line detection
+  requestAnimationFrame(buildAndPlayTitleLines);
 }
 
 // ── Close overlay ───────────────────────────────────────────────────────────
 function closeOverlay() {
   moreOverlay.classList.remove('visible');
   document.querySelector('.nav').style.display = '';
-
-  // Reset title animation so it plays again next open
-  const titleEl = moreOverlay.querySelector('.more-title--animated');
-  if (titleEl) titleEl.classList.remove('title-revealed');
+  resetTitleAnimation();
 }
 
 aboutSection.addEventListener('click', openOverlay);
@@ -249,3 +343,30 @@ contactRows.forEach((row, idx) => {
     }
   });
 });
+
+// ─── Nav: sol / lua + relógio ─────────────────────────────────────────────
+//
+// Sol aparece das 06:00 às 17:59 (hora local).
+// Lua aparece das 18:00 às 05:59.
+// O relógio atualiza a cada minuto.
+// A temperatura (23 °C) é texto estático por enquanto.
+// ─────────────────────────────────────────────────────────────────────────────
+const navSun    = document.querySelector('.nav-weather-sun');
+const navMoon   = document.querySelector('.nav-weather-moon');
+const navTime   = document.getElementById('nav-time');
+
+function updateNavWidget() {
+  const now  = new Date();
+  const hour = now.getHours();
+  const isDaytime = hour >= 6 && hour < 18;
+
+  navSun.classList.toggle('visible', isDaytime);
+  navMoon.classList.toggle('visible', !isDaytime);
+
+  const hh = String(hour).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  navTime.textContent = `${hh}:${mm}`;
+}
+
+updateNavWidget();                           // roda imediatamente ao carregar
+setInterval(updateNavWidget, 60 * 1000);    // atualiza a cada minuto

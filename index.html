@@ -23,12 +23,39 @@
         <a href="#work" class="nav-link">selected work</a>
         <a href="#contact" class="nav-link">links and contact</a>
       </div>
-      <button class="nav-menu" aria-label="Menu">
-        <svg width="20" height="7" viewBox="0 0 20 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line y1="0.5" x2="20" y2="0.5" stroke="currentColor"/>
-          <line y1="6.5" x2="20" y2="6.5" stroke="currentColor"/>
-        </svg>
-      </button>
+      <!-- Weather / time widget (replaces hamburger) -->
+      <div class="nav-weather" aria-label="Local time and weather">
+        <span class="nav-weather-city">RIO</span>
+        <div class="nav-weather-group">
+          <span class="nav-weather-temp">23 °C</span>
+          <!-- Sun icon — shown 06:00–17:59 -->
+          <svg class="nav-weather-icon nav-weather-sun" aria-hidden="true"
+               width="16" height="16" viewBox="0 0 16 16" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#sun-clip)">
+              <circle cx="8" cy="8" r="3.333" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="8" y1="0.667" x2="8" y2="2"     stroke="currentColor" stroke-linecap="round"/>
+              <line x1="8" y1="14"   x2="8" y2="15.333" stroke="currentColor" stroke-linecap="round"/>
+              <line x1="2.813" y1="2.813" x2="3.76"  y2="3.76"   stroke="currentColor" stroke-linecap="round"/>
+              <line x1="12.24" y1="12.24" x2="13.187" y2="13.187" stroke="currentColor" stroke-linecap="round"/>
+              <line x1="0.667" y1="8" x2="2"     y2="8" stroke="currentColor" stroke-linecap="round"/>
+              <line x1="14"    y1="8" x2="15.333" y2="8" stroke="currentColor" stroke-linecap="round"/>
+              <line x1="2.813" y1="13.187" x2="3.76"  y2="12.24" stroke="currentColor" stroke-linecap="round"/>
+              <line x1="12.24" y1="3.76"   x2="13.187" y2="2.813" stroke="currentColor" stroke-linecap="round"/>
+            </g>
+            <defs>
+              <clipPath id="sun-clip"><rect width="16" height="16"/></clipPath>
+            </defs>
+          </svg>
+          <!-- Moon icon — shown 18:00–05:59 -->
+          <svg class="nav-weather-icon nav-weather-moon" aria-hidden="true"
+               width="16" height="16" viewBox="0 0 16 16" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 8.527C13.895 9.661 13.469 10.743 12.772 11.644C12.075 12.546 11.136 13.23 10.064 13.618C8.992 14.005 7.832 14.079 6.72 13.831C5.607 13.583 4.589 13.023 3.783 12.217C2.977 11.411 2.417 10.393 2.169 9.28C1.921 8.168 1.995 7.008 2.382 5.936C2.769 4.864 3.454 3.925 4.355 3.228C5.257 2.531 6.339 2.105 7.473 2C6.809 2.899 6.489 4.006 6.572 5.121C6.655 6.236 7.136 7.283 7.926 8.074C8.717 8.864 9.764 9.345 10.879 9.428C11.994 9.511 13.101 9.191 14 8.527Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="nav-weather-time" id="nav-time">00:00</span>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -164,7 +191,7 @@
 
     <!-- Fixed close button -->
     <button id="more-close" class="more-close" aria-label="Close">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
