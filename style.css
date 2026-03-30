@@ -46,6 +46,10 @@
    mas acima dos backgrounds. Pointer-events: none = não bloqueia cliques.
    Para desativar: setar --noise-opacity: 0;
 ──────────────────────────────────────────────────────────────── */
+body[data-bg="hero"]::after {
+  opacity: 0; /* dots já preenchem o hero — noise ficava duplo */
+}
+
 body::after {
   content: '';
   position: fixed;
@@ -53,6 +57,7 @@ body::after {
   pointer-events: none;
   z-index: 10;
   opacity: var(--noise-opacity);
+  transition: opacity 0.5s ease;
   mix-blend-mode: overlay; /* distribui o grain igualmente em fundos claros e escuros */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
@@ -83,7 +88,7 @@ body {
 #snap {
   height: 100%;
   overflow-y: scroll;
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type removido — controlado via JS com threshold configurável */
   scroll-behavior: smooth;
 }
 
@@ -129,28 +134,41 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .nav-right {
   display: flex;
   align-items: center;
-  gap: clamp(2.5rem, 5.56vw, 5rem); /* 80px @ 1440px */
+  gap: 32px;
 }
 
-.nav-links {
-  display: flex;
-  gap: clamp(1rem, 2vw, 2.5rem);
-}
-
-.nav-link {
-  font-size: var(--text-nav);
+/* ── Hamburger menu ─────────────────────────── */
+.nav-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
   color: inherit;
-  text-decoration: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   opacity: 0.45;
-  transition: opacity 0.3s ease, color 0.6s ease;
+  transition: opacity 0.3s ease;
 }
 
-.nav-link:hover {
-  opacity: 0.7;
+.nav-menu-bar {
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.nav-link.active {
+.nav-menu:hover {
   opacity: 1;
+}
+
+.nav-menu:hover .nav-menu-bar:first-child {
+  transform: translateY(-2px);
+}
+
+.nav-menu:hover .nav-menu-bar:last-child {
+  transform: translateY(2px);
 }
 
 /* ── Weather / time widget ──────────────────── */
@@ -282,8 +300,24 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 /* ─── Hero ─────────────────────────────────── */
+/* Texto ancorado na borda inferior — fica naturalmente abaixo do centro */
 .section[data-bg="hero"] {
-  padding-top: 6vw;
+  justify-content: flex-end;
+  padding-bottom: clamp(4rem, 12vw, 10rem);
+}
+
+/* Dot texture overlay — CSS radial-gradient, sem arquivo externo.
+   Equivalente ao fundo 16×16 do Figma com opacity 48%, mas
+   calibrado para ficar igualmente sutil sobre o fundo cream. */
+.section[data-bg="hero"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--color-dark) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: top left;
+  opacity: 0.07;
+  pointer-events: none;
 }
 
 .hero-content {
@@ -293,8 +327,33 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .hero-text {
   font-size: var(--text-display);
   font-weight: 300;
-  line-height: 1.15;
+  line-height: 1.1;
   letter-spacing: -0.02em;
+
+  /* ── Blur stagger: ajuste estes valores para customizar a animação ── */
+  --blur-start:      10px;   /* blur inicial de cada caractere             */
+  --char-duration:   0.2s;   /* duração da transição por caractere         */
+  --stagger:         0.01s; /* intervalo entre cada caractere             */
+  --initial-delay:   0.1s;   /* pausa antes do primeiro caractere aparecer */
+}
+
+/* Cada caractere recebe esta classe via JS */
+.hero-char {
+  display: inline;
+  opacity: 0;
+  animation: heroCharReveal var(--char-duration, 0.5s) ease-out both;
+  /* animation-delay é aplicado inline por JS */
+}
+
+@keyframes heroCharReveal {
+  from {
+    opacity: 0;
+    filter: blur(var(--blur-start, 10px));
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+  }
 }
 
 .accent {
@@ -401,6 +460,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   background: var(--color-dark);
   z-index: 200;
   overflow-y: auto;
+  scroll-snap-type: y proximity;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease;
@@ -411,11 +471,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   pointer-events: all;
 }
 
-/* ── X close button (sempre visível, canto superior direito) ── */
+/* ── X close button — fora do grid, canto sup-dir ── */
 .more-close {
   position: fixed;
-  top: clamp(1.25rem, 2.5vw, 2.25rem); /* mais acima — ~36px ref */
-  right: var(--mo-margin, 8.33vw);
+  top: clamp(3rem, 5.56vw, 5rem);  /* 80px ref @ 1440px */
+  right: var(--mo-margin, 8.33vw); /* alinhado com a margem lateral */
   width: 32px;
   height: 32px;
   background: none;
@@ -438,13 +498,76 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   opacity: 1;
 }
 
+/* ── Intro: tela cheia dark — "hero" do overlay ────────────────── */
+.more-intro {
+  position: relative;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 var(--mo-margin) clamp(4rem, 12vw, 10rem);
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+/* Dots brancos sobre fundo dark — muito sutis (opacity 4%) */
+.more-intro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--color-cream) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: top left;
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+/* Foto — direita da tela, fade para o escuro à esquerda */
+.more-intro-image {
+  position: absolute;
+  left: 45.83vw;   /* 660/1440 — começa no início da col 6 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45.83vw;
+  height: clamp(220px, 30.49vw, 460px);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.more-intro-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+  display: block;
+}
+
+/* Gradiente: escuro à esquerda, transparente à direita */
+.more-intro-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--color-dark) 23%,
+    transparent 85%
+  );
+  border-radius: 8px;
+}
+
+/* Texto do intro: sem text-indent (o em-dash cumpre essa função) */
+.more-intro-text {
+  position: relative; /* fica sobre a imagem */
+  z-index: 1;
+}
+
 /* ── Blocos de conteúdo ── */
 .more-block {
   margin-top: var(--mo-gap);
 }
 
-/* Primeiro bloco: padding-top ao invés de margin-top */
-.more-block:first-of-type {
+/* Primeiro bloco após o intro: padding-top ao invés de margin-top */
+.more-intro + .more-block {
   margin-top: 0;
   padding-top: var(--mo-gap);
 }
@@ -454,11 +577,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   padding-bottom: var(--mo-gap);
 }
 
-/* ── Title block: full-width com margens ── */
-.more-block--title {
-  margin-left: var(--mo-margin);
-  width: calc(100% - 2 * var(--mo-margin));
-}
+/* .more-block--title foi substituído por .more-intro */
 
 /* Final text: override para centralizado, 50vw */
 .more-block--final {
@@ -467,12 +586,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-title {
-  font-size: clamp(2rem, 4.167vw, 3.75rem); /* 60px ref */
+  font-size: clamp(2rem, 4.444vw, 4rem); /* 64px ref @ 1440px */
   font-weight: 300;
-  line-height: 1.2;
-  text-indent: 1.5em;
+  line-height: 1.125;
   color: var(--color-cream);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.02em;
   text-align: left;
 }
 
@@ -491,34 +609,22 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   color: var(--color-green);
 }
 
-/* ── Title animation (line-by-line clip reveal, driven by JS) ── */
-@keyframes titleLineReveal {
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0%   0 0); }
+/* ── Overlay title: blur stagger em .more-title-serif ── */
+/* Ajuste os 4 valores abaixo para customizar a animação  */
+.more-title-serif {
+  --blur-start:    8px;    /* blur inicial de cada caractere   */
+  --char-duration: 0.45s;  /* duração da transição por char    */
+  --stagger:       0.03s;  /* intervalo entre cada caractere   */
+  --initial-delay: 0.25s;  /* pausa antes do primeiro char     */
 }
 
-/* Before JS splits the title, keep it hidden */
-.more-title--animated {
-  clip-path: inset(0 100% 0 0);
+/* Cada char recebe esta classe via JS (reutiliza o keyframe do hero) */
+.overlay-char {
+  display: inline;
+  opacity: 0;
+  animation: heroCharReveal var(--char-duration, 0.45s) ease-out both;
 }
 
-/* After JS rebuilds, each line-wrap needs these base styles */
-.more-title--animated ._tl-wrap {
-  overflow: hidden;
-  display: block;
-  line-height: inherit;
-}
-
-.more-title--animated ._tl {
-  display: inline-block;
-  clip-path: inset(0 100% 0 0);
-}
-
-/* Espaço extra após o título — leitor rola mais até o primeiro parágrafo */
-.more-block--title + .more-block--col1,
-.more-block--title + .more-block--col3 {
-  margin-top: calc(var(--mo-gap) * 1.8);
-}
 
 /* ── Bio text (col 1 ou col 3, sempre 4 colunas largas) ── */
 .more-block--col1 {
@@ -768,10 +874,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .entry-image {
     order: -1;
-  }
-
-  .nav-links {
-    display: none;
   }
 
   .section-title {
