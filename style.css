@@ -825,6 +825,31 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 
+/* ─── About: CTA button (mobile-only) ──────────
+   No desktop fica display:none — substitui o hover
+   no mobile onde não há cursor customizado.        */
+.about-cta {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: clamp(2rem, 6vw, 3rem);
+  padding: 0.7rem 1.25rem;
+  border-radius: 100px;
+  background: var(--color-dark);
+  color: var(--color-cream);
+  font-family: 'Delight', sans-serif;
+  font-size: var(--text-nav);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.about-cta:active {
+  opacity: 0.7;
+}
+
 /* ─── Contact: table layout ─────────────────── */
 
 .contact-table {
@@ -842,6 +867,14 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .contact-row:last-child {
   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* Ícone inline — oculto no desktop, visível no mobile */
+.contact-row-icon {
+  display: none;
+  flex-shrink: 0;
+  color: var(--color-cream);
+  opacity: 0.55;
 }
 
 .contact-row-text {
@@ -864,29 +897,227 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 /* ─── Responsive ───────────────────────────── */
-@media (max-width: 768px) {
+
+/* ── Touch / no-hover: remove all mouse-only interactions ──────────────────
+   @media (hover: none) apanha touch screens e stylus sem hover.
+   Tudo que depende de mouse (cursores custom, hover states visuais)
+   é neutralizado aqui. JS ainda roda mas .cursor-label fica invisible. */
+@media (hover: none) {
+
+  /* Restaura cursor padrão (CSS cursor: none estava em #about) */
+  #about { cursor: auto; }
+
+  /* Esconde o cursor customizado completamente */
+  .cursor-label { display: none !important; }
+
+  /* Work rows: remove hover gap animation e border color change */
+  .work-row:hover {
+    gap: 6vw;
+    border-top-color: #2c2c2c;
+  }
+  .work-arrow { display: none; }
+
+  /* Contact: restaura cursor e remove translateX no hover */
+  .contact-row { cursor: auto; }
+  .contact-row:hover .contact-row-text { transform: none; }
+
+  /* Overlay captions: sempre visíveis (sem hover para revelar) */
+  .more-caption { opacity: 1; }
+}
+
+/* ── Mobile (< 640px) ──────────────────────────────────────────────────────
+   Layout de coluna única. Nav weather oculta. Work rows empilhados.
+   Overlay intro com imagem no topo, texto em largura total. */
+@media (max-width: 640px) {
+
+  /* Seções base */
   .section {
-    padding: 12vw 6vw;
+    padding: 6vw;
     min-height: 100svh;
   }
 
-  .hero-content {
-    max-width: 100%;
+  #work.section,
+  #contact.section {
+    padding-top: max(5rem, 14vw);
   }
 
-  .about-text {
-    max-width: 100%;
-  }
+  /* Hero */
+  .hero-content { max-width: 100%; }
 
-  .entry {
-    grid-template-columns: 1fr;
-  }
+  /* About */
+  .about-text { max-width: 100%; }
 
-  .entry-image {
-    order: -1;
-  }
-
+  /* Section title */
   .section-title {
+    max-width: 100%;
     hyphens: auto;
+    margin-bottom: clamp(2rem, 8vw, 4rem);
+  }
+
+  /* ── Work rows: de tabela para cards empilhados ── */
+  .work-row {
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 40px;
+  }
+
+  .work-date,
+  .work-company,
+  .work-products,
+  .work-desc {
+    width: 100%;
+    flex-shrink: unset;
+  }
+
+  .work-company { font-size: 20px; }
+  .work-body    { font-size: 18px; line-height: 1.5; }
+  .work-arrow   { display: none; }
+
+  #work.section { padding-bottom: max(3rem, 8vw); }
+
+  /* ── Hero: bump para ~40px (design Figma 375px) ── */
+  .hero-text { font-size: 2.5rem; }
+
+  /* ── About: mostra botão CTA ── */
+  .about-cta { display: inline-flex; }
+
+  /* ── Work: esconde produtos, sempre mostra seta ── */
+  .work-products { display: none; }
+
+  /* Seta sempre visível no top-right — sobrescreve display:none do hover:none */
+  .work-arrow {
+    display: block !important;
+    opacity: 1;
+    transform: none;
+    top: 24px;
+    right: 0;
+  }
+
+  /* ── Contact: texto menor + ícones inline ── */
+  .contact-row-text { font-size: 1.5rem; } /* 24px */
+
+  .contact-row {
+    justify-content: space-between;
+    cursor: auto;
+  }
+
+  .contact-row-icon { display: block; }
+
+  /* ── Nav weather: oculto em mobile (salva espaço) ── */
+  .nav-weather { display: none; }
+
+  /* ── Overlay: close button mais próximo do canto ── */
+  .more-close {
+    top: 20px;
+    right: 24px;
+  }
+
+  /* ── Overlay intro: imagem no topo, texto na base ── */
+  .more-intro {
+    padding: 0 6vw 10vw;
+    flex-direction: column;     /* imagem posicionada absolutamente no topo */
+    justify-content: flex-end;
+  }
+
+  .more-intro-image {
+    left: 0;
+    top: 0;
+    transform: none;
+    width: 100%;
+    height: 55svh;
+    border-radius: 0;
+  }
+
+  /* Gradiente: escuro na base (onde está o texto), transparente no topo */
+  .more-intro-image::after {
+    background: linear-gradient(
+      to bottom,
+      transparent 40%,
+      var(--color-dark) 90%
+    );
+  }
+
+  .more-intro-text { width: 100%; }
+
+  /* ── Overlay blocks: margens laterais simples ── */
+  .more-block--col1,
+  .more-block--col3 {
+    margin-left: 6vw;
+    width: calc(100% - 12vw);
+  }
+
+  .more-block--rail {
+    margin-left: 6vw;
+    margin-right: 0;
+    width: calc(100% - 6vw);
+    overflow: hidden;
+  }
+
+  /* Photo rails: scroll horizontal em mobile */
+  .more-rail {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  .more-rail::-webkit-scrollbar { display: none; }
+
+  .rail-1 .more-photo-item { width: 60vw; flex-shrink: 0; }
+  .rail-2 .more-photo-item { width: 50vw; flex-shrink: 0; }
+
+  /* Career: empilha bio e lista */
+  .more-career-header,
+  .more-career-body {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .more-career-label,
+  .more-career-bio  { width: 100%; }
+  .more-career-cols,
+  .more-career-list { width: 100%; }
+
+  /* Bloco final */
+  .more-block--final {
+    margin-left: 6vw;
+    width: calc(100% - 12vw);
+  }
+}
+
+/* ── Tablet (641px – 1024px) ────────────────────────────────────────────── */
+@media (min-width: 641px) and (max-width: 1024px) {
+
+  /* Close button mais próximo — 112px é muito para tablet */
+  .more-close {
+    top: 40px;
+    right: 40px;
+  }
+
+  /* Intro image: ajusta largura para não cortar o texto */
+  .more-intro-image {
+    left: 50vw;
+    width: 44vw;
+  }
+
+  .more-intro-text { width: 85vw; }
+
+  /* Overlay cols: menos deslocamento, ocupa mais largura */
+  .more-block--col3 {
+    margin-left: var(--mo-margin);
+    width: 65vw;
+  }
+}
+
+/* ── Large screens (> 1600px) ───────────────────────────────────────────── */
+@media (min-width: 1600px) {
+
+  /* Evita que a imagem do intro esticale demais em 4K */
+  .more-intro-image {
+    max-width: 740px;
+  }
+
+  /* Close button: nunca mais que ~8vw do canto */
+  .more-close {
+    right: max(112px, 7vw);
+    top: max(80px, 5.5vw);
   }
 }

@@ -360,11 +360,23 @@ snap.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 // Touch (mobile)
+// Mesma lógica do wheel: só faz snap quando a seção atual chegou à borda
+// na direção do swipe. Evita salto acidental ao fazer scroll dentro de seções altas.
 let touchStartY = 0;
 snap.addEventListener('touchstart', e => {
   touchStartY = e.touches[0].clientY;
 }, { passive: true });
 snap.addEventListener('touchend', e => {
   const delta = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(delta) > 50) goToSection(snapIdx + (delta > 0 ? 1 : -1));
+  if (Math.abs(delta) < 50) return;
+
+  const section      = snapSections[snapIdx];
+  const scrollingDown = delta > 0;
+  const atBottom = snap.scrollTop + snap.clientHeight >= section.offsetTop + section.offsetHeight - 4;
+  const atTop    = snap.scrollTop <= section.offsetTop + 4;
+
+  if (scrollingDown && !atBottom) return;
+  if (!scrollingDown && !atTop)   return;
+
+  goToSection(snapIdx + (delta > 0 ? 1 : -1));
 }, { passive: true });
