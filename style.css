@@ -221,6 +221,12 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   min-height: 100svh;
 }
 
+/* Respiro extra no fim dos cases — evita acionar o scroll para o próximo
+   section ao tentar ler a última linha */
+#work.section {
+  padding-bottom: max(6rem, 14vw);
+}
+
 .section-inner {
   width: 100%;
 }
@@ -245,18 +251,37 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   border-top: 1px solid #2c2c2c;
   padding-top: 24px;
   padding-bottom: 72px;
-  cursor: none;
 
-  /* ── Compressão no hover ─────────────────────────────────────────────
-   * Reduz o gap entre colunas no hover, dando organicidade à interação.
-   * Ajuste "gap normal" e "gap hover" conforme preferir (0–20% de diff).
-   * ------------------------------------------------------------------ */
-  gap: 6vw;                                  /* ← gap normal             */
-  transition: gap 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  gap: 6vw;
+  transition: gap          0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .work-row:hover {
-  gap: 5vw;                                  /* ← gap no hover (~−30%)   */
+  gap: 5vw;
+  border-top-color: var(--color-cream);
+}
+
+/* Ícone de seta — fora do fluxo flex para não empurrar os outros itens.
+   Posicionado absolutamente no canto direito da row, dentro do grid. */
+.work-row {
+  position: relative;
+}
+
+.work-arrow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  color: var(--color-cream);
+  opacity: 0;
+  transform: translate(-4px, calc(-50% + 6px));
+  transition: opacity   0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.work-row:hover .work-arrow {
+  opacity: 1;
+  transform: translate(0, -50%);
 }
 
 .work-date,
@@ -419,12 +444,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 /* ── Ícones ── */
 .cursor-label .icon-copy         { display: none; }
 .cursor-label .icon-arrow-up-right { display: none; }
-
-/* Estado "case-study" (rows do work) */
-.cursor-label.case-study {
-  text-transform: none;
-  letter-spacing: 0.04em;
-}
 
 /* Estado "contact-email" — copia email */
 .cursor-label.contact-email .icon-arrow { display: none; }
@@ -807,16 +826,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 
 /* ─── Contact: table layout ─────────────────── */
-.contact-title {
-  font-family: 'Hedvig Letters Serif', serif;
-  font-size: var(--text-base);
-  font-weight: 400;
-  line-height: 1.25;
-  letter-spacing: 0;
-  color: var(--color-cream);
-  max-width: none;
-  margin-bottom: clamp(3rem, 7vw, 8rem);
-}
 
 .contact-table {
   width: 100%;

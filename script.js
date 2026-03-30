@@ -75,105 +75,41 @@ aboutSection.addEventListener('mousemove',  placeCursor);
 aboutSection.addEventListener('mouseenter', () => showCursor('find out more'));
 aboutSection.addEventListener('mouseleave', hideCursor);
 
-// ─── Title: line-by-line reveal ──────────────────────────────────────────────
+// ─── Overlay: blur stagger em .more-title-serif ("how things could…") ─────────
 //
-// Because line-breaks depend on the viewport, we detect them at runtime:
-//   1. Expand the title into one <span> per word (preserving child elements
-//      like the green serif span)
-//   2. Group words by their getBoundingClientRect().top → each group = 1 line
-//   3. Rebuild the title as:
-//        <div class="_tl-wrap">            ← overflow:hidden per line
-//          <span class="_tl">…words…</span>← animated clip-path
-//        </div>
-//   4. Each ._tl gets a staggered CSS animation via inline style
-//
-// On close we restore the original HTML so the next open starts fresh.
+// Só o span.more-title-serif (primeiro do overlay) é quebrado em chars.
+// O resto do título aparece imediatamente.
+// Timings lidos das variáveis CSS em .more-title-serif — ajuste lá.
 // ─────────────────────────────────────────────────────────────────────────────
-const titleAnimEl  = moreOverlay.querySelector('.more-title--animated');
-const titleOrigHTML = titleAnimEl ? titleAnimEl.innerHTML : null;
+const overlaySerifEl   = moreOverlay.querySelector('.more-title-serif');
+const overlaySerifText = overlaySerifEl ? overlaySerifEl.textContent : null;
 
-function buildAndPlayTitleLines() {
-  if (!titleAnimEl || !titleOrigHTML) return;
+function playOverlayBlur() {
+  if (!overlaySerifEl || !overlaySerifText) return;
 
-  // Restore original markup (handles re-opens)
-  titleAnimEl.innerHTML = titleOrigHTML;
-  // Remove the "keep hidden" clip so we can measure correctly
-  titleAnimEl.style.clipPath = 'none';
+  const style     = getComputedStyle(overlaySerifEl);
+  const stagger   = parseFloat(style.getPropertyValue('--stagger'))       || 0.03;
+  const initDelay = parseFloat(style.getPropertyValue('--initial-delay')) || 0.25;
 
-  // ── Step 1: expand all direct children into word-level spans ──────────────
-  const origNodes = Array.from(titleAnimEl.childNodes);
-  titleAnimEl.innerHTML = '';
+  overlaySerifEl.innerHTML = '';
+  let charIndex = 0;
 
-  origNodes.forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      // plain text → split by spaces
-      node.textContent.split(' ').forEach((word, i, arr) => {
-        if (!word) return;
-        const s = document.createElement('span');
-        s.className = '_tw';
-        s.textContent = word;
-        titleAnimEl.appendChild(s);
-        if (i < arr.length - 1) titleAnimEl.appendChild(document.createTextNode(' '));
-      });
+  [...overlaySerifText].forEach(char => {
+    if (char === ' ') {
+      overlaySerifEl.appendChild(document.createTextNode(' '));
     } else {
-      // element (e.g. .more-title-serif) → clone per word to keep classes/styles
-      node.textContent.split(' ').forEach((word, i, arr) => {
-        if (!word) return;
-        const clone = node.cloneNode(false);
-        clone.textContent = word;
-        titleAnimEl.appendChild(clone);
-        if (i < arr.length - 1) titleAnimEl.appendChild(document.createTextNode(' '));
-      });
+      const span = document.createElement('span');
+      span.className = 'overlay-char';
+      span.style.animationDelay = `${(initDelay + charIndex * stagger).toFixed(3)}s`;
+      span.textContent = char;
+      overlaySerifEl.appendChild(span);
+      charIndex++;
     }
-  });
-
-  // ── Step 2: group words by line (same getBoundingClientRect top) ───────────
-  const wordEls = Array.from(titleAnimEl.querySelectorAll('._tw, .more-title-serif'));
-  const lines   = [];
-
-  wordEls.forEach(w => {
-    const top  = Math.round(w.getBoundingClientRect().top);
-    const last = lines[lines.length - 1];
-    if (!last || Math.abs(top - last.top) > 4) {
-      lines.push({ top, nodes: [w] });
-    } else {
-      last.nodes.push(w);
-    }
-  });
-
-  // ── Step 3: rebuild as animated line containers ────────────────────────────
-  titleAnimEl.innerHTML = '';
-
-  const DURATION   = 0.45;  // seconds per line reveal
-  const STEPS      = 55;    // discrete steps (sub-character feel)
-  const LINE_DELAY = 0.11;  // seconds between lines
-
-  lines.forEach((line, i) => {
-    const wrap  = document.createElement('div');
-    wrap.className = '_tl-wrap';
-    // First line keeps the CSS text-indent; subsequent lines reset it
-    if (i > 0) wrap.style.textIndent = '0';
-
-    const inner = document.createElement('span');
-    inner.className = '_tl';
-    inner.style.animation =
-      `titleLineReveal ${DURATION}s steps(${STEPS}, end) ${i * LINE_DELAY}s both`;
-
-    line.nodes.forEach((w, wi) => {
-      inner.appendChild(w);
-      if (wi < line.nodes.length - 1) inner.appendChild(document.createTextNode(' '));
-    });
-
-    wrap.appendChild(inner);
-    titleAnimEl.appendChild(wrap);
   });
 }
 
-function resetTitleAnimation() {
-  if (titleAnimEl && titleOrigHTML !== null) {
-    titleAnimEl.innerHTML = titleOrigHTML;
-    titleAnimEl.style.clipPath = '';
-  }
+function resetOverlayBlur() {
+  if (overlaySerifEl) overlaySerifEl.textContent = overlaySerifText;
 }
 
 // ── Open overlay ────────────────────────────────────────────────────────────
@@ -182,17 +118,14 @@ function openOverlay() {
   moreOverlay.scrollTop = 0;
   document.querySelector('.nav').style.display = 'none';
   hideCursor();
-
-  // rAF ensures the overlay is painted (opacity transition started) before
-  // we measure getBoundingClientRect for line detection
-  requestAnimationFrame(buildAndPlayTitleLines);
+  requestAnimationFrame(playOverlayBlur);
 }
 
 // ── Close overlay ───────────────────────────────────────────────────────────
 function closeOverlay() {
   moreOverlay.classList.remove('visible');
   document.querySelector('.nav').style.display = '';
-  resetTitleAnimation();
+  resetOverlayBlur();
 }
 
 aboutSection.addEventListener('click', openOverlay);
@@ -205,58 +138,9 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ─── Work rows: cursor variável por empresa ────────────────────────────────
-//
-// Cada row tem label e cor próprios. Ao mover entre rows o cursor
-// não pisca — apenas troca texto + cor suavemente (via CSS transition).
-//
-// Para editar: altere label/bg/fg abaixo. A ordem deve corresponder
-// à ordem das .work-row no HTML.
-//
-const rowCursors = [
-  { label: 'how design led the way at Mosaico',  bg: '#e1c237', fg: '#1e1e20' }, // Mosaico
-  { label: 'balancing governance and scale at Globo',      bg: '#3786e1', fg: '#1e1e20' }, // Globo
-  { label: 'merging solutions to find growth at Stone', bg: '#54c811', fg: '#1e1e20' }, // Stone
-  { label: 'we changed how telcos sell at Oi',  bg: '#cb37e1', fg: '#1e1e20' }, // Oi
-];
 
-const workRows    = [...document.querySelectorAll('#work .work-row')];
-const workSection = document.getElementById('work');
-let activeRowIdx  = -1;
-let rowSwitchTimer = null;
-
-// ── Delay para troca de cursor entre rows ─────────────────────────────────
-// Evita que o cursor fique oscilando quando o mouse fica exatamente
-// na borda entre duas rows. Aumente ROW_SWITCH_DELAY se ainda oscilar.
-const ROW_SWITCH_DELAY = 80; // ms — ajuste aqui se necessário
-
-function applyRowCursor(idx) {
-  activeRowIdx = idx;
-  if (idx === -1) { hideCursor(); return; }
-  const c = rowCursors[idx];
-  cursorText.textContent = c.label;
-  cursorLabel.style.setProperty('--cursor-bg', c.bg);
-  cursorLabel.style.setProperty('--cursor-fg', c.fg);
-  cursorLabel.className = 'cursor-label visible case-study';
-}
-
-workSection.addEventListener('mousemove', (e) => {
-  placeCursor(e);
-  const row    = e.target.closest('.work-row');
-  const newIdx = row ? workRows.indexOf(row) : -1;
-
-  if (newIdx === activeRowIdx) return; // mesmo alvo — nada a fazer
-
-  // Cancela troca pendente e agenda nova com delay
-  clearTimeout(rowSwitchTimer);
-  rowSwitchTimer = setTimeout(() => applyRowCursor(newIdx), ROW_SWITCH_DELAY);
-});
-
-workSection.addEventListener('mouseleave', () => {
-  clearTimeout(rowSwitchTimer);
-  activeRowIdx = -1;
-  hideCursor();
-});
+// Delay para evitar oscilação do cursor ao passar pela borda entre rows
+const ROW_SWITCH_DELAY = 80; // ms
 
 // ─── Contact rows: cursor por tipo + ação ──────────────────────────────────
 //
@@ -370,3 +254,117 @@ function updateNavWidget() {
 
 updateNavWidget();                           // roda imediatamente ao carregar
 setInterval(updateNavWidget, 60 * 1000);    // atualiza a cada minuto
+
+// ─── Hero: blur stagger — apenas na frase final (.hero-animated) ─────────────
+//
+// Só o span.hero-animated é quebrado em chars com a animação blur→nítido.
+// Os timings são lidos das variáveis CSS em .hero-text (ajuste lá):
+//   --stagger        → intervalo entre chars
+//   --initial-delay  → pausa antes do primeiro char
+// ─────────────────────────────────────────────────────────────────────────────
+(function initHeroBlurStagger() {
+  const heroText    = document.querySelector('.hero-text');
+  const animTarget  = document.querySelector('.hero-animated');
+  if (!heroText || !animTarget) return;
+
+  const style     = getComputedStyle(heroText);
+  const stagger   = parseFloat(style.getPropertyValue('--stagger'))       || 0.01;
+  const initDelay = parseFloat(style.getPropertyValue('--initial-delay')) || 0.1;
+
+  // Substitui o conteúdo do span.hero-animated por chars individuais
+  const text = animTarget.textContent;
+  animTarget.innerHTML = '';
+  let charIndex = 0;
+
+  [...text].forEach(char => {
+    if (char === ' ') {
+      animTarget.appendChild(document.createTextNode(' '));
+    } else {
+      const span = document.createElement('span');
+      span.className = 'hero-char';
+      span.style.animationDelay = `${(initDelay + charIndex * stagger).toFixed(3)}s`;
+      span.textContent = char;
+      animTarget.appendChild(span);
+      charIndex++;
+    }
+  });
+})();
+
+// ─── Scroll snap via JS — threshold configurável ──────────────────────────────
+//
+// SCROLL_THRESHOLD : px de delta acumulado para avançar seção (sensibilidade)
+// SNAP_LOCK_MS     : ms bloqueados após um snap (impede duplo-salto)
+//
+// Valores maiores em SCROLL_THRESHOLD = mais resistência ao scroll acidental.
+// ─────────────────────────────────────────────────────────────────────────────
+const SCROLL_THRESHOLD = 60;   // px acumulados antes de pular seção
+const SNAP_LOCK_MS     = 850;  // ms de lock após snap
+
+const snapSections = [...document.querySelectorAll('#snap .section')];
+let snapIdx    = 0;
+let snapLocked = false;
+let wheelAccum = 0;
+let resetTimer = null;
+
+// Mantém snapIdx sincronizado com a seção visível (via bgObserver já existente)
+const snapSyncObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const i = snapSections.indexOf(entry.target);
+        if (i !== -1) snapIdx = i;
+      }
+    });
+  },
+  { root: snap, rootMargin: '-50% 0px -50% 0px', threshold: 0 }
+);
+snapSections.forEach(s => snapSyncObserver.observe(s));
+
+function goToSection(idx) {
+  if (idx < 0 || idx >= snapSections.length || snapLocked) return;
+  snapLocked = true;
+  snapIdx    = idx;
+  snapSections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => { snapLocked = false; wheelAccum = 0; }, SNAP_LOCK_MS);
+}
+
+snap.addEventListener('wheel', (e) => {
+  // Durante um snap animado, bloqueia tudo
+  if (snapLocked) { e.preventDefault(); return; }
+
+  const section      = snapSections[snapIdx];
+  const scrollingDown = e.deltaY > 0;
+
+  // Verifica se o container já chegou à borda da seção atual
+  // na direção em que o usuário está scrollando.
+  // Tolerância de 4px para subpixel rendering.
+  const atBottom = snap.scrollTop + snap.clientHeight >= section.offsetTop + section.offsetHeight - 4;
+  const atTop    = snap.scrollTop <= section.offsetTop + 4;
+
+  // Se há mais conteúdo para ver dentro da seção, deixa o scroll nativo agir
+  if (scrollingDown && !atBottom) return;
+  if (!scrollingDown && !atTop)   return;
+
+  // Chegou à borda — previne scroll nativo e acumula para o snap
+  e.preventDefault();
+  wheelAccum += e.deltaY;
+
+  clearTimeout(resetTimer);
+  resetTimer = setTimeout(() => { wheelAccum = 0; }, 200);
+
+  if (wheelAccum >= SCROLL_THRESHOLD) {
+    goToSection(snapIdx + 1);
+  } else if (wheelAccum <= -SCROLL_THRESHOLD) {
+    goToSection(snapIdx - 1);
+  }
+}, { passive: false });
+
+// Touch (mobile)
+let touchStartY = 0;
+snap.addEventListener('touchstart', e => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+snap.addEventListener('touchend', e => {
+  const delta = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(delta) > 50) goToSection(snapIdx + (delta > 0 ? 1 : -1));
+}, { passive: true });
