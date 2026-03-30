@@ -471,11 +471,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   pointer-events: all;
 }
 
-/* ── X close button — fora do grid, canto sup-dir ── */
+/* ── X close button — posição fixa em px, fora do grid ── */
 .more-close {
   position: fixed;
-  top: clamp(3rem, 5.56vw, 5rem);  /* 80px ref @ 1440px */
-  right: var(--mo-margin, 8.33vw); /* alinhado com a margem lateral */
+  top: 80px;
+  right: 112px;
   width: 32px;
   height: 32px;
   background: none;
@@ -555,10 +555,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   border-radius: 8px;
 }
 
-/* Texto do intro: sem text-indent (o em-dash cumpre essa função) */
+/* Texto do intro: 7 colunas (1047px ref @ 1440px = 72.71vw) */
 .more-intro-text {
-  position: relative; /* fica sobre a imagem */
+  position: relative;
   z-index: 1;
+  width: 72.71vw; /* 1047/1440 — col 1 até fim da col 7 */
 }
 
 /* ── Blocos de conteúdo ── */
