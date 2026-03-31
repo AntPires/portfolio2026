@@ -1050,13 +1050,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     border-radius: 0;
     overflow: hidden;
     background: #1a1a1a; /* placeholder enquanto a imagem não existe */
-    aspect-ratio: 4 / 3;
   }
   .work-img img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
   }
   /* Esconde a imagem se o src estiver vazio */
   .work-img img:not([src]), .work-img img[src=""] {
