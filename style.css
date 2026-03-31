@@ -729,14 +729,24 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .rail-2 .more-photo-item:nth-child(5) { width: 12.5vw;  }
 
 /* ── Career section ── */
+/* ── Career: desktop 2-col grid ──
+ *   Figma: left=588/1200=49%, gap=132/1200=11%, right=480/1200=40%
+ *   col1=60% (content 49% + visual gap 11%), col2=40%
+ *   column-gap: 0 + padding-right: 11% on col1 → border spans full width
+ * ─────────────────────────────────────────────────────────────────────── */
 .more-career {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  column-gap: 0;
+  row-gap: 0;
+  align-items: start;
   width: 100%;
 }
 
-/* ── Career: header e body usam gap de 11% para alinhar com as entries ──
- *   Figma: left=588/1200=49%, gap=132/1200=11%, right=480/1200=40%
- * ─────────────────────────────────────────────────────────────────────── */
 .more-career-header {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 11%;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -751,10 +761,12 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 /* Cabeçalho das colunas Where / Main role — com linha inferior */
 .more-career-cols-header {
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  margin-top: clamp(1.5rem, 2.5vw, 2.5rem);
+  margin-top: 0;
 }
 
 .more-career-col-head {
@@ -767,18 +779,25 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-career-bio {
+  grid-column: 1;
+  grid-row: 2;
   font-family: 'Hedvig Letters Serif', serif;
   font-size: clamp(1.25rem, 1.667vw, 1.5rem); /* 24px ref — igual ao .more-bio */
   font-weight: 400;
   line-height: 1.5;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
-  padding: clamp(1.5rem, 2.5vw, 2.5rem) 0;
+  padding-right: 11%;
+  padding-top: clamp(1.5rem, 2.5vw, 2.5rem);
+  padding-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
 }
 
 .more-career-list {
+  grid-column: 2;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
+  padding-top: clamp(1.5rem, 2.5vw, 2.5rem);
 }
 
 .more-career-row {
@@ -1093,9 +1112,22 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     flex-shrink: unset;
   }
 
-  /* Career: já é vertical por natureza na nova estrutura */
-  .more-career-bio  { width: 100%; }
-  .more-career-list { width: 100%; }
+  /* Career: volta para layout em bloco no mobile */
+  .more-career {
+    display: block;
+  }
+  .more-career-header {
+    padding-right: 0;
+  }
+  .more-career-cols-header {
+    margin-top: clamp(1.5rem, 2.5vw, 2.5rem);
+  }
+  .more-career-bio {
+    padding-right: 0;
+  }
+  .more-career-list {
+    padding-top: 0;
+  }
 
   /* Bloco final */
   .more-block--final {
