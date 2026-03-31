@@ -1047,7 +1047,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .work-img {
     display: block;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 0;
     overflow: hidden;
     background: #1a1a1a; /* placeholder enquanto a imagem não existe */
     aspect-ratio: 4 / 3;
