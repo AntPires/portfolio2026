@@ -350,6 +350,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .hero-text {
+  opacity: 0; /* escondido até fontes carregarem — JS adiciona .fonts-ready */
   font-size: var(--text-display);
   font-weight: 300;
   line-height: 1.1;
@@ -360,6 +361,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   --char-duration:   0.2s;   /* duração da transição por caractere         */
   --stagger:         0.01s; /* intervalo entre cada caractere             */
   --initial-delay:   0.1s;   /* pausa antes do primeiro caractere aparecer */
+}
+
+/* Hero visível após fontes carregarem */
+.hero-text.fonts-ready {
+  opacity: 1;
 }
 
 /* Cada caractere recebe esta classe via JS */
@@ -1112,6 +1118,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .rail-2 .more-photo-item {
     width: calc(50% - 4px) !important;
     flex-shrink: unset;
+  }
+
+  /* Oculta "certified brazillian" (3º item do rail-2) — mantém 2 linhas de 2 */
+  .rail-2 .more-photo-item:nth-child(3) {
+    display: none !important;
   }
 
   /* Career: volta para layout em bloco no mobile */

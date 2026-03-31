@@ -288,7 +288,9 @@ setInterval(updateNavWidget, 60 * 1000);    // atualiza a cada minuto
 //   --stagger        → intervalo entre chars
 //   --initial-delay  → pausa antes do primeiro char
 // ─────────────────────────────────────────────────────────────────────────────
-(function initHeroBlurStagger() {
+(async function initHeroBlurStagger() {
+  await document.fonts.ready;
+
   const heroText    = document.querySelector('.hero-text');
   const animTarget  = document.querySelector('.hero-animated');
   if (!heroText || !animTarget) return;
@@ -314,6 +316,9 @@ setInterval(updateNavWidget, 60 * 1000);    // atualiza a cada minuto
       charIndex++;
     }
   });
+
+  // Revela o hero agora que a fonte está carregada
+  heroText.classList.add('fonts-ready');
 })();
 
 // ─── Scroll snap via JS — threshold configurável ──────────────────────────────
