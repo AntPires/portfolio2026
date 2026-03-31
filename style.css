@@ -284,6 +284,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   transform: translate(0, -50%);
 }
 
+/* Imagem do case — visível apenas no mobile, oculta no desktop/tablet */
+.work-img {
+  display: none;
+}
+
 .work-date,
 .work-company {
   flex-shrink: 0;
@@ -1016,7 +1021,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .section-title {
     max-width: 100%;
     hyphens: auto;
-    margin-bottom: clamp(2rem, 8vw, 4rem);
+    margin-top: clamp(2rem, 10vw, 4rem);
+    margin-bottom: clamp(2.5rem, 12vw, 5rem);
   }
 
   /* ── Work rows: de tabela para cards empilhados ── */
@@ -1036,6 +1042,34 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .work-company { font-size: 20px; }
   .work-body    { font-size: 18px; line-height: 1.5; }
+
+  /* Imagem do case — exibida no mobile após o texto */
+  .work-img {
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1a1a; /* placeholder enquanto a imagem não existe */
+    aspect-ratio: 4 / 3;
+  }
+  .work-img img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Esconde a imagem se o src estiver vazio */
+  .work-img img:not([src]), .work-img img[src=""] {
+    display: none;
+  }
+  /* Esconde o container se não houver imagem */
+  .work-img:has(img:not([src])),
+  .work-img:has(img[src=""]) {
+    display: none;
+  }
+
+  /* Seta: completamente oculta no mobile */
+  .work-arrow { display: none !important; }
 
   #work.section { padding-bottom: max(3rem, 8vw); }
 
@@ -1057,12 +1091,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   /* ── Work: title maior, empilha produtos ocultos ── */
   .section-title { font-size: 2.25rem; }
   .work-products { display: none; }
-
-  /* Seta: override da posição para layout empilhado (hover:none já a exibe) */
-  .work-arrow {
-    top: 24px;
-    transform: none; /* mobile: sem o translate(-50%) vertical */
-  }
 
   /* ── Contact: texto menor no mobile ── */
   .contact-row-text { font-size: 1.5rem; } /* 24px — apenas no mobile */
