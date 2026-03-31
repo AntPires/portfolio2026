@@ -975,13 +975,22 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   #work.section { padding-bottom: max(3rem, 8vw); }
 
-  /* ── Hero: bump para ~40px (design Figma 375px) ── */
+  /* ── Nav: logo maior no mobile ── */
+  .nav-logo { width: 2.25rem; } /* 36px — Figma ref */
+
+  /* ── Hero: bump para ~40px + menos padding-bottom (evita texto cortado) ── */
   .hero-text { font-size: 2.5rem; }
+  .section[data-bg="hero"] { padding-bottom: clamp(2rem, 8vw, 3.5rem); }
 
-  /* ── About: mostra botão CTA ── */
-  .about-cta { display: inline-flex; }
+  /* ── About: mostra botão CTA, sem full-width ── */
+  .about-cta {
+    display: inline-flex;
+    align-self: flex-start;
+  }
 
-  /* ── Work: esconde produtos, sempre mostra seta ── */
+  /* ── Work: title maior, esconde produtos, sempre mostra seta ── */
+  .section-title { font-size: 2.25rem; }
+
   .work-products { display: none; }
 
   /* Seta sempre visível no top-right — sobrescreve display:none do hover:none */
@@ -1046,24 +1055,30 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     width: calc(100% - 12vw);
   }
 
+  /* ── Overlay: gap maior entre blocos ── */
+  .more-overlay { --mo-gap: 6rem; }
+
+  /* ── Overlay: captions ocultas no mobile ── */
+  .more-caption { display: none !important; }
+
   .more-block--rail {
     margin-left: 6vw;
-    margin-right: 0;
-    width: calc(100% - 6vw);
-    overflow: hidden;
+    margin-right: 6vw;
+    width: calc(100% - 12vw);
   }
 
-  /* Photo rails: scroll horizontal em mobile */
+  /* Photo rails: grid 2 colunas em mobile (ao invés de scroll horizontal) */
   .more-rail {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: 8px;
   }
-  .more-rail::-webkit-scrollbar { display: none; }
 
-  .rail-1 .more-photo-item { width: 60vw; flex-shrink: 0; }
-  .rail-2 .more-photo-item { width: 50vw; flex-shrink: 0; }
+  .rail-1 .more-photo-item,
+  .rail-2 .more-photo-item {
+    width: calc(50% - 4px);
+    flex-shrink: unset;
+  }
 
   /* Career: empilha bio e lista */
   .more-career-header,

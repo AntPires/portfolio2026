@@ -205,6 +205,17 @@ contactSection.addEventListener('mouseleave', () => {
   hideCursor();
 });
 
+// SVGs para o feedback de cópia no mobile (ícone na linha do email)
+const COPY_ICON_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+</svg>`;
+const CHECK_ICON_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="20 6 9 17 4 12"></polyline>
+</svg>`;
+
+const emailRowIcon = contactRows[0] ? contactRows[0].querySelector('.contact-row-icon') : null;
+
 contactRows.forEach((row, idx) => {
   row.addEventListener('click', () => {
     contactActions[idx]();
@@ -214,15 +225,20 @@ contactRows.forEach((row, idx) => {
       isCopiedState = true;
       clearTimeout(copiedHideTimer);
 
+      // Desktop: cursor label
       cursorText.textContent = 'copied!';
       cursorLabel.style.setProperty('--cursor-bg', 'var(--color-cream)');
       cursorLabel.style.setProperty('--cursor-fg', 'var(--color-dark)');
       cursorLabel.className = 'cursor-label visible contact-copied';
 
-      // Após 1.5s, oculta o cursor até o usuário mudar de linha
+      // Mobile: troca ícone da row para checkmark
+      if (emailRowIcon) emailRowIcon.innerHTML = CHECK_ICON_SVG;
+
+      // Após 1.5s, restaura estado original
       copiedHideTimer = setTimeout(() => {
         hideCursor();
-        activeContactIdx = -1; // força re-avaliação se o mouse se mover
+        activeContactIdx = -1;
+        if (emailRowIcon) emailRowIcon.innerHTML = COPY_ICON_SVG;
       }, 1500);
     }
   });
