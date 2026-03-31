@@ -1046,14 +1046,13 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   /* Imagem do case — exibida no mobile após o texto */
   .work-img {
     display: block;
-    width: 100%;
-    border-radius: 0;
+    max-width: 100%;
     overflow: hidden;
-    background: #1a1a1a; /* placeholder enquanto a imagem não existe */
   }
   .work-img img {
     display: block;
     width: 100%;
+    max-width: 100%;
     height: auto;
   }
   /* Esconde a imagem se o src estiver vazio */
