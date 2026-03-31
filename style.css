@@ -768,7 +768,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .more-career-bio {
   font-family: 'Hedvig Letters Serif', serif;
-  font-size: clamp(1.25rem, 1.667vw, 1.5rem); /* 24px ref */
+  font-size: clamp(1.25rem, 1.667vw, 1.5rem); /* 24px ref — igual ao .more-bio */
+  font-weight: 400;
   line-height: 1.5;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
@@ -923,7 +924,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
    é neutralizado aqui. JS ainda roda mas .cursor-label fica invisible. */
 @media (hover: none) {
 
-  /* Restaura cursor padrão (CSS cursor: none estava em #about) */
+  /* Restaura cursor padrão (#about tinha cursor: none) */
   #about { cursor: auto; }
 
   /* Esconde o cursor customizado completamente */
@@ -934,11 +935,29 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     gap: 6vw;
     border-top-color: #2c2c2c;
   }
-  .work-arrow { display: none; }
 
-  /* Contact: restaura cursor e remove translateX no hover */
-  .contact-row { cursor: auto; }
+  /* Seta sempre visível (sem hover) — centrada no meio da row (tablet).
+     Mobile sobrescreve para top: 24px por causa do layout empilhado. */
+  .work-arrow {
+    display: block !important;
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+
+  /* Contact: restaura cursor, ícones inline sempre visíveis,
+     texto e ícone em extremos opostos da row */
+  .contact-row {
+    cursor: auto;
+    justify-content: space-between;
+  }
   .contact-row:hover .contact-row-text { transform: none; }
+  .contact-row-icon { display: block; }
+
+  /* About: CTA button visível (substitui o hover que abre o overlay) */
+  .about-cta {
+    display: inline-flex;
+    align-self: flex-start;
+  }
 
   /* Overlay captions: sempre visíveis (sem hover para revelar) */
   .more-caption { opacity: 1; }
@@ -990,7 +1009,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .work-company { font-size: 20px; }
   .work-body    { font-size: 18px; line-height: 1.5; }
-  .work-arrow   { display: none; }
 
   #work.section { padding-bottom: max(3rem, 8vw); }
 
@@ -1009,35 +1027,18 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   /* ── Hero: bump para ~40px ── */
   .hero-text { font-size: 2.5rem; }
 
-  /* ── About: mostra botão CTA, sem full-width ── */
-  .about-cta {
-    display: inline-flex;
-    align-self: flex-start;
-  }
-
-  /* ── Work: title maior, esconde produtos, sempre mostra seta ── */
+  /* ── Work: title maior, empilha produtos ocultos ── */
   .section-title { font-size: 2.25rem; }
-
   .work-products { display: none; }
 
-  /* Seta sempre visível no top-right — sobrescreve display:none do hover:none */
+  /* Seta: override da posição para layout empilhado (hover:none já a exibe) */
   .work-arrow {
-    display: block !important;
-    opacity: 1;
-    transform: none;
     top: 24px;
-    right: 0;
+    transform: none; /* mobile: sem o translate(-50%) vertical */
   }
 
-  /* ── Contact: texto menor + ícones inline ── */
-  .contact-row-text { font-size: 1.5rem; } /* 24px */
-
-  .contact-row {
-    justify-content: space-between;
-    cursor: auto;
-  }
-
-  .contact-row-icon { display: block; }
+  /* ── Contact: texto menor no mobile ── */
+  .contact-row-text { font-size: 1.5rem; } /* 24px — apenas no mobile */
 
   /* ── Nav weather: oculto em mobile (salva espaço) ── */
   .nav-weather { display: none; }
@@ -1120,7 +1121,10 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .more-intro-text { width: 85vw; }
 
-  /* Overlay cols: menos deslocamento, ocupa mais largura */
+  /* Overlay cols: menos deslocamento, ocupa mais largura —
+     col1 e col3 ficam com a mesma largura para não parecerem
+     maiores que o career-bio que ocupa a rail inteira */
+  .more-block--col1,
   .more-block--col3 {
     margin-left: var(--mo-margin);
     width: 65vw;
