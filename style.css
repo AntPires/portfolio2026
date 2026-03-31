@@ -737,9 +737,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
  *   Figma: left=588/1200=49%, gap=132/1200=11%, right=480/1200=40%
  * ─────────────────────────────────────────────────────────────────────── */
 .more-career-header {
-  display: flex;
-  align-items: baseline;
-  gap: 11%;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -750,14 +747,14 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   font-weight: 400;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
-  width: 49%;
-  flex-shrink: 0;
 }
 
-.more-career-cols {
+/* Cabeçalho das colunas Where / Main role — com linha inferior */
+.more-career-cols-header {
   display: flex;
-  width: 40%;
-  flex-shrink: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: clamp(1.5rem, 2.5vw, 2.5rem);
 }
 
 .more-career-col-head {
@@ -769,26 +766,16 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   width: 50%;
 }
 
-.more-career-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 11%;
-  padding-top: 16px;
-}
-
 .more-career-bio {
-  width: 49%;
-  flex-shrink: 0;
   font-family: 'Hedvig Letters Serif', serif;
   font-size: clamp(1.25rem, 1.667vw, 1.5rem); /* 24px ref */
   line-height: 1.5;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
+  padding: clamp(1.5rem, 2.5vw, 2.5rem) 0;
 }
 
 .more-career-list {
-  width: 40%;
-  flex-shrink: 0;
   display: flex;
   flex-direction: column;
 }
@@ -1105,15 +1092,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     flex-shrink: unset;
   }
 
-  /* Career: empilha bio e lista */
-  .more-career-header,
-  .more-career-body {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .more-career-label,
+  /* Career: já é vertical por natureza na nova estrutura */
   .more-career-bio  { width: 100%; }
-  .more-career-cols,
   .more-career-list { width: 100%; }
 
   /* Bloco final */
