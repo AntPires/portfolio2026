@@ -626,7 +626,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-title-serif {
   font-family: 'Hedvig Letters Serif', serif;
   font-weight: 400;
-  color: var(--color-green);
+  color: var(--color-cream);
 }
 
 /* ── Overlay title: blur stagger em .more-title-serif ── */
@@ -825,6 +825,38 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 
+/* ─── Copy toast ───────────────────────────────
+   Mesmo visual do cursor-label do desktop.
+   Aparece centrado na base da tela em todos os
+   dispositivos ao copiar o email.               */
+.copy-toast {
+  position: fixed;
+  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 100px;
+  background: var(--color-dark);
+  color: var(--color-cream);
+  font-family: 'Delight', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.copy-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ─── About: CTA button (mobile-only) ──────────
    No desktop fica display:none — substitui o hover
    no mobile onde não há cursor customizado.        */
@@ -975,12 +1007,20 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   #work.section { padding-bottom: max(3rem, 8vw); }
 
-  /* ── Nav: logo maior no mobile ── */
-  .nav-logo { width: 2.25rem; } /* 36px — Figma ref */
+  /* ── Nav: mais espaço do topo e logo maior ── */
+  .nav { padding: 20px 6vw; }
+  .nav-logo { width: 2.75rem; } /* 44px */
 
-  /* ── Hero: bump para ~40px + menos padding-bottom (evita texto cortado) ── */
+  /* ── Hero: permite crescer além de 100svh se necessário ── */
+  .section[data-bg="hero"] {
+    height: auto;
+    min-height: 100svh;
+    /* 80px da borda inferior + safe-area do iPhone (home bar) */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ── Hero: bump para ~40px ── */
   .hero-text { font-size: 2.5rem; }
-  .section[data-bg="hero"] { padding-bottom: clamp(2rem, 8vw, 3.5rem); }
 
   /* ── About: mostra botão CTA, sem full-width ── */
   .about-cta {
@@ -1021,30 +1061,13 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     right: 24px;
   }
 
-  /* ── Overlay intro: imagem no topo, texto na base ── */
+  /* ── Overlay intro: sem imagem no mobile, texto full-width ── */
   .more-intro {
     padding: 0 6vw 10vw;
-    flex-direction: column;     /* imagem posicionada absolutamente no topo */
     justify-content: flex-end;
   }
 
-  .more-intro-image {
-    left: 0;
-    top: 0;
-    transform: none;
-    width: 100%;
-    height: 55svh;
-    border-radius: 0;
-  }
-
-  /* Gradiente: escuro na base (onde está o texto), transparente no topo */
-  .more-intro-image::after {
-    background: linear-gradient(
-      to bottom,
-      transparent 40%,
-      var(--color-dark) 90%
-    );
-  }
+  .more-intro-image { display: none; }
 
   .more-intro-text { width: 100%; }
 
@@ -1067,7 +1090,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     width: calc(100% - 12vw);
   }
 
-  /* Photo rails: grid 2 colunas em mobile (ao invés de scroll horizontal) */
+  /* Photo rails: grid 2 colunas em mobile
+     !important necessário pois os seletores :nth-child() da base
+     têm especificidade maior e sobrescrevem sem ele. */
   .more-rail {
     flex-wrap: wrap;
     overflow-x: visible;
@@ -1076,7 +1101,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .rail-1 .more-photo-item,
   .rail-2 .more-photo-item {
-    width: calc(50% - 4px);
+    width: calc(50% - 4px) !important;
     flex-shrink: unset;
   }
 

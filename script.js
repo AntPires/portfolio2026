@@ -215,6 +215,8 @@ const CHECK_ICON_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="no
 </svg>`;
 
 const emailRowIcon = contactRows[0] ? contactRows[0].querySelector('.contact-row-icon') : null;
+const copyToast    = document.getElementById('copy-toast');
+let   toastTimer   = null;
 
 contactRows.forEach((row, idx) => {
   row.addEventListener('click', () => {
@@ -233,6 +235,13 @@ contactRows.forEach((row, idx) => {
 
       // Mobile: troca ícone da row para checkmark
       if (emailRowIcon) emailRowIcon.innerHTML = CHECK_ICON_SVG;
+
+      // Toast: aparece em todos os dispositivos
+      if (copyToast) {
+        clearTimeout(toastTimer);
+        copyToast.classList.add('visible');
+        toastTimer = setTimeout(() => copyToast.classList.remove('visible'), 1500);
+      }
 
       // Após 1.5s, restaura estado original
       copiedHideTimer = setTimeout(() => {
