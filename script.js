@@ -113,7 +113,8 @@ function resetOverlayBlur() {
 }
 
 // ── Open overlay ────────────────────────────────────────────────────────────
-function openOverlay() {
+async function openOverlay() {
+  await document.fonts.ready;
   moreOverlay.classList.add('visible');
   moreOverlay.scrollTop = 0;
   document.querySelector('.nav').style.display = 'none';
@@ -140,7 +141,7 @@ document.addEventListener('keydown', (e) => {
 
 
 // Delay para evitar oscilação do cursor ao passar pela borda entre rows
-const ROW_SWITCH_DELAY = 80; // ms
+const ROW_SWITCH_DELAY = 40; // ms
 
 // ─── Contact rows: cursor por tipo + ação ──────────────────────────────────
 //

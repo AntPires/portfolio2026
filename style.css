@@ -746,6 +746,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-career-header {
   grid-column: 1;
   grid-row: 1;
+  display: flex;
+  align-items: center;
   padding-right: 11%;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
