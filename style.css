@@ -236,7 +236,15 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   font-weight: 300;
   line-height: 1.08;
   letter-spacing: -0.02em;
-  max-width: 40%;
+  max-width: 49%;
+  margin-bottom: clamp(1rem, 2vw, 2rem);
+}
+
+.work-subtitle {
+  font-family: 'Delight', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #a3a3a3;
   margin-bottom: clamp(3rem, 7vw, 8rem);
 }
 
