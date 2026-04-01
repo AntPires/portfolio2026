@@ -241,9 +241,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .work-subtitle {
-  font-family: 'Delight', sans-serif;
+  font-family: 'Hedvig Letters Serif', serif;
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
   color: #a3a3a3;
   margin-bottom: clamp(3rem, 7vw, 8rem);
 }
@@ -1048,7 +1048,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     flex-shrink: unset;
   }
 
-  .work-company { font-size: 20px; }
+  .work-company { font-size: 20px; margin-top: -10px; }
   .work-body    { font-size: 18px; line-height: 1.5; }
 
   /* Imagem do case — exibida no mobile após o texto */
