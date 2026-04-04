@@ -1,6 +1,37 @@
 const snap = document.getElementById('snap');
 const sections = document.querySelectorAll('.section[data-bg]');
 
+// ─── Nav: live time ──────────────────────────
+(function initNavTime() {
+  const el = document.getElementById('nav-time');
+  if (!el) return;
+  function tick() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    el.textContent = `${h}:${m}`;
+  }
+  tick();
+  setInterval(tick, 30000);
+})();
+
+// ─── Nav: hide on scroll down, show on scroll up ─
+const nav = document.querySelector('.nav');
+let lastScrollY = 0;
+
+snap.addEventListener('scroll', () => {
+  const currentY = snap.scrollTop;
+  const delta = currentY - lastScrollY;
+
+  if (delta > 0 && currentY > 80) {
+    nav.classList.add('nav-hidden');
+  } else if (delta < 0) {
+    nav.classList.remove('nav-hidden');
+  }
+
+  lastScrollY = currentY;
+}, { passive: true });
+
 // ─── Background transition on scroll ────────
 const bgObserver = new IntersectionObserver(
   (entries) => {
@@ -75,13 +106,7 @@ aboutSection.addEventListener('mousemove',  placeCursor);
 aboutSection.addEventListener('mouseenter', () => showCursor('find out more'));
 aboutSection.addEventListener('mouseleave', hideCursor);
 
-// Cursor on "Wave" link in hero
-const waveLink = document.querySelector('.wave-hover');
-if (waveLink) {
-  waveLink.addEventListener('mousemove',  placeCursor);
-  waveLink.addEventListener('mouseenter', () => showCursor('wave by bemobi', 'contact-link'));
-  waveLink.addEventListener('mouseleave', hideCursor);
-}
+// Wave cursor listeners are attached after DOM manipulation in initHeroBlurStagger below
 
 // ─── Overlay: blur stagger em .more-title-serif ("how things could…") ─────────
 //
@@ -125,7 +150,7 @@ async function openOverlay() {
   await document.fonts.ready;
   moreOverlay.classList.add('visible');
   moreOverlay.scrollTop = 0;
-  document.querySelector('.nav').style.display = 'none';
+  nav.style.display = 'none';
   hideCursor();
   requestAnimationFrame(playOverlayBlur);
 }
@@ -133,7 +158,8 @@ async function openOverlay() {
 // ── Close overlay ───────────────────────────────────────────────────────────
 function closeOverlay() {
   moreOverlay.classList.remove('visible');
-  document.querySelector('.nav').style.display = '';
+  nav.style.display = '';
+  nav.classList.remove('nav-hidden');
   resetOverlayBlur();
 }
 
@@ -281,23 +307,44 @@ contactRows.forEach((row, idx) => {
   const stagger   = parseFloat(style.getPropertyValue('--stagger'))       || 0.01;
   const initDelay = parseFloat(style.getPropertyValue('--initial-delay')) || 0.1;
 
-  // Substitui o conteúdo do span.hero-animated por chars individuais
-  const text = animTarget.textContent;
+  // Snapshot childNodes before clearing — preserves element nodes like <a class="wave-hover">
+  const children = [...animTarget.childNodes];
   animTarget.innerHTML = '';
   let charIndex = 0;
 
-  [...text].forEach(char => {
-    if (char === ' ') {
-      animTarget.appendChild(document.createTextNode(' '));
-    } else {
-      const span = document.createElement('span');
-      span.className = 'hero-char';
-      span.style.animationDelay = `${(initDelay + charIndex * stagger).toFixed(3)}s`;
-      span.textContent = char;
-      animTarget.appendChild(span);
-      charIndex++;
+  function splitTextIntoChars(container, text) {
+    [...text].forEach(char => {
+      if (char === ' ') {
+        container.appendChild(document.createTextNode(' '));
+      } else {
+        const span = document.createElement('span');
+        span.className = 'hero-char';
+        span.style.animationDelay = `${(initDelay + charIndex * stagger).toFixed(3)}s`;
+        span.textContent = char;
+        container.appendChild(span);
+        charIndex++;
+      }
+    });
+  }
+
+  children.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      splitTextIntoChars(animTarget, node.textContent);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Clone the element (e.g. <a class="wave-hover">) without its children
+      const clone = node.cloneNode(false);
+      splitTextIntoChars(clone, node.textContent);
+      animTarget.appendChild(clone);
     }
   });
+
+  // Re-attach wave cursor listeners to the newly created clone
+  const waveLinkNew = animTarget.querySelector('.wave-hover');
+  if (waveLinkNew) {
+    waveLinkNew.addEventListener('mousemove',  placeCursor);
+    waveLinkNew.addEventListener('mouseenter', () => showCursor('check us out', 'contact-link'));
+    waveLinkNew.addEventListener('mouseleave', hideCursor);
+  }
 
   // Revela o hero agora que a fonte está carregada
   heroText.classList.add('fonts-ready');
