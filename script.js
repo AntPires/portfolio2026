@@ -75,6 +75,14 @@ aboutSection.addEventListener('mousemove',  placeCursor);
 aboutSection.addEventListener('mouseenter', () => showCursor('find out more'));
 aboutSection.addEventListener('mouseleave', hideCursor);
 
+// Cursor on "Wave" link in hero
+const waveLink = document.querySelector('.wave-hover');
+if (waveLink) {
+  waveLink.addEventListener('mousemove',  placeCursor);
+  waveLink.addEventListener('mouseenter', () => showCursor('wave by bemobi', 'contact-link'));
+  waveLink.addEventListener('mouseleave', hideCursor);
+}
+
 // ─── Overlay: blur stagger em .more-title-serif ("how things could…") ─────────
 //
 // Só o span.more-title-serif (primeiro do overlay) é quebrado em chars.
@@ -254,32 +262,6 @@ contactRows.forEach((row, idx) => {
   });
 });
 
-// ─── Nav: sol / lua + relógio ─────────────────────────────────────────────
-//
-// Sol aparece das 06:00 às 17:59 (hora local).
-// Lua aparece das 18:00 às 05:59.
-// O relógio atualiza a cada minuto.
-// A temperatura (23 °C) é texto estático por enquanto.
-// ─────────────────────────────────────────────────────────────────────────────
-const navSun    = document.querySelector('.nav-weather-sun');
-const navMoon   = document.querySelector('.nav-weather-moon');
-const navTime   = document.getElementById('nav-time');
-
-function updateNavWidget() {
-  const now  = new Date();
-  const hour = now.getHours();
-  const isDaytime = hour >= 6 && hour < 18;
-
-  navSun.classList.toggle('visible', isDaytime);
-  navMoon.classList.toggle('visible', !isDaytime);
-
-  const hh = String(hour).padStart(2, '0');
-  const mm = String(now.getMinutes()).padStart(2, '0');
-  navTime.textContent = `${hh}:${mm}`;
-}
-
-updateNavWidget();                           // roda imediatamente ao carregar
-setInterval(updateNavWidget, 60 * 1000);    // atualiza a cada minuto
 
 // ─── Hero: blur stagger — apenas na frase final (.hero-animated) ─────────────
 //
