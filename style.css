@@ -699,7 +699,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   display: block;
   width: 100%;
   height: var(--mo-photo-h);
-  border-radius: 4px;
+  border-radius: 0;
   object-fit: cover;
 }
 
@@ -742,7 +742,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   flex-shrink: 0;
   width: 30.35vw;   /* 437/1440 */
   margin-left: 18.82vw;  /* 271/1440 */
-  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -1161,17 +1160,39 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     flex-wrap: wrap;
     overflow-x: visible;
     gap: 8px;
+    align-items: flex-start;
   }
 
+  /* Reset de todos os offsets do layout solto do desktop */
   .rail-1 .more-photo-item,
   .rail-2 .more-photo-item {
     width: calc(50% - 4px) !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
     flex-shrink: unset;
   }
 
-  /* Oculta "certified brazillian" (3º item do rail-2) — mantém 2 linhas de 2 */
-  .rail-2 .more-photo-item:nth-child(3) {
-    display: none !important;
+  /* Fotos em proporção natural no mobile — sem altura fixa */
+  .more-photo-item img {
+    height: auto;
+    aspect-ratio: unset;
+  }
+
+  /* ── Seção de perfil no mobile: oculta foto, texto full-width ── */
+  .more-block--profile {
+    display: block;
+    margin-left: 6vw;
+    width: calc(100% - 12vw);
+  }
+
+  .more-profile-img {
+    display: none;
+  }
+
+  .more-profile-text {
+    margin-left: 0;
+    padding-right: 0;
+    width: 100%;
   }
 
   /* Career: volta para layout em bloco no mobile */
@@ -1189,12 +1210,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   }
   .more-career-list {
     padding-top: 0;
-  }
-
-  /* Bloco final */
-  .more-block--final {
-    margin-left: 6vw;
-    width: calc(100% - 12vw);
   }
 }
 
