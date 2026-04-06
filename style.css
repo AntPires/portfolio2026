@@ -471,6 +471,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 /* Variáveis locais do overlay */
 .more-overlay {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   --mo-margin:   8.33vw;         /* 120/1440 — margem lateral */
   --mo-gap:      clamp(5rem, 22.22vw, 20rem); /* 320px ref */
   --mo-col4:     40.83vw;        /* 588/1440 — largura de 4 colunas */
@@ -753,9 +755,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-profile-text {
-  flex: 1;
-  margin-left: 1.67vw;
-  padding-right: var(--mo-margin);
+  flex-shrink: 0;
+  width: 30.21vw;   /* 435/1440 — mesma largura da foto (437px ≈ 30.35vw) */
+  margin-left: 1.67vw; /* 24px gap entre foto e texto */
 }
 
 .more-profile-text .more-bio + .more-bio {
@@ -1170,6 +1172,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     margin-left: 0 !important;
     margin-top: 0 !important;
     flex-shrink: unset;
+  }
+
+  /* Oculta "still learning from her" (1º item do rail-2) — mantém 2x2 */
+  .rail-2 .more-photo-item:nth-child(1) {
+    display: none !important;
   }
 
   /* Fotos em proporção natural no mobile — sem altura fixa */
