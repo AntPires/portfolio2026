@@ -72,12 +72,15 @@ body::after {
 }
 
 /* ─── Base ─────────────────────────────────── */
-html, body {
-  height: 100%;
-  overflow: hidden;
+html {
+  overflow-x: hidden;
 }
 
+/* Lenis smooth scroll utilities */
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
 body {
+  min-height: 100%;
   font-family: 'Delight', sans-serif;
   font-weight: 300;
   background-color: var(--color-cream);
@@ -86,10 +89,7 @@ body {
 }
 
 #snap {
-  height: 100%;
-  overflow-y: scroll;
-  /* scroll-snap-type removido — controlado via JS com threshold configurável */
-  scroll-behavior: smooth;
+  /* scroll agora é de window — gerenciado pelo Lenis */
 }
 
 /* ─── Background states ────────────────────── */
@@ -179,7 +179,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 /* ─── Sections ─────────────────────────────── */
 .section {
   height: 100svh;
-  scroll-snap-align: start;
+  /* scroll-snap-align: removido — Lenis gerencia o scroll */
   padding: 6vw;
   position: relative;
   display: flex;
@@ -530,7 +530,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   justify-content: flex-end;
   padding: 0 var(--mo-margin) clamp(4rem, 12vw, 10rem);
   overflow: hidden;
-  scroll-snap-align: start;
+  /* scroll-snap-align: removido — Lenis gerencia o scroll */
 }
 
 /* Dots brancos sobre fundo dark — muito sutis (opacity 4%) */

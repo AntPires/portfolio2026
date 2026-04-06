@@ -1,5 +1,18 @@
-const snap = document.getElementById('snap');
+const snap = document.getElementById('snap'); // mantido para compatibilidade
 const sections = document.querySelectorAll('.section[data-bg]');
+
+// ─── Lenis + GSAP setup ──────────────────────
+gsap.registerPlugin(ScrollTrigger);
+
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  touchMultiplier: 1.5,
+  smoothWheel: true,
+});
+
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
 
 // ─── Nav: live time ──────────────────────────
 (function initNavTime() {
@@ -17,20 +30,14 @@ const sections = document.querySelectorAll('.section[data-bg]');
 
 // ─── Nav: hide on scroll down, show on scroll up ─
 const nav = document.querySelector('.nav');
-let lastScrollY = 0;
 
-snap.addEventListener('scroll', () => {
-  const currentY = snap.scrollTop;
-  const delta = currentY - lastScrollY;
-
-  if (delta > 0 && currentY > 80) {
+lenis.on('scroll', ({ scroll, direction }) => {
+  if (direction === 1 && scroll > 80) {
     nav.classList.add('nav-hidden');
-  } else if (delta < 0) {
+  } else if (direction === -1) {
     nav.classList.remove('nav-hidden');
   }
-
-  lastScrollY = currentY;
-}, { passive: true });
+});
 
 // ─── Background transition on scroll ────────
 const bgObserver = new IntersectionObserver(
@@ -41,7 +48,7 @@ const bgObserver = new IntersectionObserver(
       }
     });
   },
-  { root: snap, rootMargin: '-50% 0px -50% 0px', threshold: 0 }
+  { root: null, rootMargin: '-50% 0px -50% 0px', threshold: 0 }
 );
 
 sections.forEach((section) => bgObserver.observe(section));
@@ -60,7 +67,7 @@ const navObserver = new IntersectionObserver(
       }
     });
   },
-  { root: snap, rootMargin: '-40% 0px -60% 0px', threshold: 0 }
+  { root: null, rootMargin: '-40% 0px -60% 0px', threshold: 0 }
 );
 
 sections.forEach((section) => {
@@ -73,7 +80,7 @@ navLinks.forEach((link) => {
     const target = document.querySelector(link.getAttribute('href'));
     if (target) {
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth' });
+      lenis.scrollTo(target, { offset: 0, duration: 1.2 });
     }
   });
 });
@@ -148,6 +155,7 @@ function resetOverlayBlur() {
 // ── Open overlay ────────────────────────────────────────────────────────────
 async function openOverlay() {
   await document.fonts.ready;
+  lenis.stop();
   moreOverlay.classList.add('visible');
   moreOverlay.scrollTop = 0;
   nav.style.display = 'none';
@@ -161,6 +169,7 @@ function closeOverlay() {
   nav.style.display = '';
   nav.classList.remove('nav-hidden');
   resetOverlayBlur();
+  lenis.start();
 }
 
 aboutSection.addEventListener('click', openOverlay);
@@ -350,93 +359,51 @@ contactRows.forEach((row, idx) => {
   heroText.classList.add('fonts-ready');
 })();
 
-// ─── Scroll snap via JS — threshold configurável ──────────────────────────────
-//
-// SCROLL_THRESHOLD : px de delta acumulado para avançar seção (sensibilidade)
-// SNAP_LOCK_MS     : ms bloqueados após um snap (impede duplo-salto)
-//
-// Valores maiores em SCROLL_THRESHOLD = mais resistência ao scroll acidental.
-// ─────────────────────────────────────────────────────────────────────────────
-const SCROLL_THRESHOLD = 60;   // px acumulados antes de pular seção
-const SNAP_LOCK_MS     = 850;  // ms de lock após snap
+// ─── ScrollTrigger: animações de entrada ─────────────────────────────────────
 
-const snapSections = [...document.querySelectorAll('#snap .section')];
-let snapIdx    = 0;
-let snapLocked = false;
-let wheelAccum = 0;
-let resetTimer = null;
+// Work rows — cascata conforme scroll
+gsap.utils.toArray('.work-row').forEach((row, i) => {
+  gsap.from(row, {
+    scrollTrigger: {
+      trigger: row,
+      start: 'top 88%',
+      toggleActions: 'play none none none',
+    },
+    opacity: 0,
+    y: 20,
+    duration: 0.55,
+    delay: i * 0.06,
+    ease: 'power2.out',
+    clearProps: 'all',
+  });
+});
 
-// Mantém snapIdx sincronizado com a seção visível (via bgObserver já existente)
-const snapSyncObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const i = snapSections.indexOf(entry.target);
-        if (i !== -1) snapIdx = i;
-      }
-    });
+// Títulos e subtítulo das seções
+gsap.utils.toArray('.section-title, .work-subtitle').forEach(el => {
+  gsap.from(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 90%',
+      toggleActions: 'play none none none',
+    },
+    opacity: 0,
+    y: 14,
+    duration: 0.6,
+    ease: 'power2.out',
+    clearProps: 'all',
+  });
+});
+
+// About text — fade suave
+gsap.from('.about-text', {
+  scrollTrigger: {
+    trigger: '#about',
+    start: 'top 65%',
+    toggleActions: 'play none none none',
   },
-  { root: snap, rootMargin: '-50% 0px -50% 0px', threshold: 0 }
-);
-snapSections.forEach(s => snapSyncObserver.observe(s));
-
-function goToSection(idx) {
-  if (idx < 0 || idx >= snapSections.length || snapLocked) return;
-  snapLocked = true;
-  snapIdx    = idx;
-  snapSections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
-  setTimeout(() => { snapLocked = false; wheelAccum = 0; }, SNAP_LOCK_MS);
-}
-
-snap.addEventListener('wheel', (e) => {
-  // Durante um snap animado, bloqueia tudo
-  if (snapLocked) { e.preventDefault(); return; }
-
-  const section      = snapSections[snapIdx];
-  const scrollingDown = e.deltaY > 0;
-
-  // Verifica se o container já chegou à borda da seção atual
-  // na direção em que o usuário está scrollando.
-  // Tolerância de 4px para subpixel rendering.
-  const atBottom = snap.scrollTop + snap.clientHeight >= section.offsetTop + section.offsetHeight - 4;
-  const atTop    = snap.scrollTop <= section.offsetTop + 4;
-
-  // Se há mais conteúdo para ver dentro da seção, deixa o scroll nativo agir
-  if (scrollingDown && !atBottom) return;
-  if (!scrollingDown && !atTop)   return;
-
-  // Chegou à borda — previne scroll nativo e acumula para o snap
-  e.preventDefault();
-  wheelAccum += e.deltaY;
-
-  clearTimeout(resetTimer);
-  resetTimer = setTimeout(() => { wheelAccum = 0; }, 200);
-
-  if (wheelAccum >= SCROLL_THRESHOLD) {
-    goToSection(snapIdx + 1);
-  } else if (wheelAccum <= -SCROLL_THRESHOLD) {
-    goToSection(snapIdx - 1);
-  }
-}, { passive: false });
-
-// Touch (mobile)
-// Mesma lógica do wheel: só faz snap quando a seção atual chegou à borda
-// na direção do swipe. Evita salto acidental ao fazer scroll dentro de seções altas.
-let touchStartY = 0;
-snap.addEventListener('touchstart', e => {
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
-snap.addEventListener('touchend', e => {
-  const delta = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(delta) < 50) return;
-
-  const section      = snapSections[snapIdx];
-  const scrollingDown = delta > 0;
-  const atBottom = snap.scrollTop + snap.clientHeight >= section.offsetTop + section.offsetHeight - 4;
-  const atTop    = snap.scrollTop <= section.offsetTop + 4;
-
-  if (scrollingDown && !atBottom) return;
-  if (!scrollingDown && !atTop)   return;
-
-  goToSection(snapIdx + (delta > 0 ? 1 : -1));
-}, { passive: true });
+  opacity: 0,
+  y: 12,
+  duration: 0.7,
+  ease: 'power2.out',
+  clearProps: 'all',
+});
