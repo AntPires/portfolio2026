@@ -152,6 +152,53 @@ function resetOverlayBlur() {
   if (overlaySerifEl) overlaySerifEl.textContent = overlaySerifText;
 }
 
+// ── Overlay: ScrollTrigger animations (scroller = moreOverlay) ──────────────
+let overlayAnimCtx = null;
+
+function initOverlayAnimations() {
+  if (overlayAnimCtx) { overlayAnimCtx.revert(); overlayAnimCtx = null; }
+
+  overlayAnimCtx = gsap.context(() => {
+    const sc = { scroller: moreOverlay };
+
+    // Bio 1
+    gsap.from('.more-block--col1 .more-bio', {
+      scrollTrigger: { ...sc, trigger: '.more-block--col1', start: 'top 85%', toggleActions: 'play none none none' },
+      opacity: 0, y: 20, duration: 0.7, stagger: 0.15, ease: 'power2.out', clearProps: 'all',
+    });
+
+    // Rail 1 — fotos soltas
+    gsap.from('.rail-1 .more-photo-item', {
+      scrollTrigger: { ...sc, trigger: '.rail-1', start: 'top 90%', toggleActions: 'play none none none' },
+      opacity: 0, y: 28, duration: 0.65, stagger: 0.1, ease: 'power2.out', clearProps: 'all',
+    });
+
+    // Profile — foto grande
+    gsap.from('.more-profile-img', {
+      scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 85%', toggleActions: 'play none none none' },
+      opacity: 0, y: 24, duration: 0.85, ease: 'power2.out', clearProps: 'all',
+    });
+
+    // Profile — parágrafos de texto
+    gsap.from('.more-profile-text .more-bio', {
+      scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 80%', toggleActions: 'play none none none' },
+      opacity: 0, y: 16, duration: 0.65, stagger: 0.12, ease: 'power2.out', clearProps: 'all',
+    });
+
+    // Career — bloco completo
+    gsap.from('.more-career', {
+      scrollTrigger: { ...sc, trigger: '.more-career', start: 'top 88%', toggleActions: 'play none none none' },
+      opacity: 0, y: 20, duration: 0.7, ease: 'power2.out', clearProps: 'all',
+    });
+
+    // Rail 2 — fotos soltas
+    gsap.from('.rail-2 .more-photo-item', {
+      scrollTrigger: { ...sc, trigger: '.rail-2', start: 'top 90%', toggleActions: 'play none none none' },
+      opacity: 0, y: 28, duration: 0.65, stagger: 0.1, ease: 'power2.out', clearProps: 'all',
+    });
+  });
+}
+
 // ── Open overlay ────────────────────────────────────────────────────────────
 async function openOverlay() {
   await document.fonts.ready;
@@ -160,7 +207,11 @@ async function openOverlay() {
   moreOverlay.scrollTop = 0;
   nav.style.display = 'none';
   hideCursor();
-  requestAnimationFrame(playOverlayBlur);
+  requestAnimationFrame(() => {
+    playOverlayBlur();
+    ScrollTrigger.refresh();
+    initOverlayAnimations();
+  });
 }
 
 // ── Close overlay ───────────────────────────────────────────────────────────
@@ -169,6 +220,7 @@ function closeOverlay() {
   nav.style.display = '';
   nav.classList.remove('nav-hidden');
   resetOverlayBlur();
+  if (overlayAnimCtx) { overlayAnimCtx.revert(); overlayAnimCtx = null; }
   lenis.start();
 }
 

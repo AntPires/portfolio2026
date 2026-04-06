@@ -494,18 +494,18 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   pointer-events: all;
 }
 
-/* ── X close button — posição fixa em px, fora do grid ── */
+/* ── Close button — pill com fundo e stroke ── */
 .more-close {
   position: fixed;
-  top: 80px;
-  right: 112px;
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
+  top: 5.56vw;
+  right: 5.56vw;
+  background: #1e1e20;
+  border: 1px solid #2c2c2c;
+  border-radius: 32px;
+  padding: 16px;
   cursor: pointer;
   color: var(--color-cream);
-  opacity: 0.45;
+  opacity: 0.85;
   transition: opacity 0.25s ease;
   align-items: center;
   justify-content: center;
@@ -717,20 +717,51 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   opacity: 1;
 }
 
-/* ── Rail 1: 380 / 180 / 380 / 180 (gap ~26.67px = 1.85vw) ── */
-.rail-1 { gap: 1.85vw; }
-.rail-1 .more-photo-item:nth-child(1) { width: 26.39vw; }
-.rail-1 .more-photo-item:nth-child(2) { width: 12.5vw;  }
-.rail-1 .more-photo-item:nth-child(3) { width: 26.39vw; }
-.rail-1 .more-photo-item:nth-child(4) { width: 12.5vw;  }
+/* ── Rail 1: layout solto com offsets verticais individuais ── */
+.rail-1 { gap: 0; }
+.rail-1 .more-photo-item:nth-child(1) { width: 19.72vw; margin-top: 7.22vw; }
+.rail-1 .more-photo-item:nth-child(2) { width: 12.5vw;  margin-top: 0;      margin-left: 6.67vw; }
+.rail-1 .more-photo-item:nth-child(3) { width: 26.39vw; margin-top: 4.1vw;  margin-left: 2.36vw; }
+.rail-1 .more-photo-item:nth-child(4) { width: 9.79vw;  margin-top: 2.01vw; margin-left: 6.67vw; }
 
-/* ── Rail 2: 240 / 240 / 240 / 180 / 180 (gap 30px = 2.08vw) ── */
-.rail-2 { gap: 2.08vw; }
-.rail-2 .more-photo-item:nth-child(1) { width: 16.67vw; }
-.rail-2 .more-photo-item:nth-child(2) { width: 16.67vw; }
-.rail-2 .more-photo-item:nth-child(3) { width: 16.67vw; }
-.rail-2 .more-photo-item:nth-child(4) { width: 12.5vw;  }
-.rail-2 .more-photo-item:nth-child(5) { width: 12.5vw;  }
+/* ── Rail 2: layout solto com offsets verticais individuais ── */
+.rail-2 { gap: 0; }
+.rail-2 .more-photo-item:nth-child(1) { width: 16.67vw; margin-top: 0; }
+.rail-2 .more-photo-item:nth-child(2) { width: 9.17vw;  margin-left: 9.51vw; margin-top: 10.49vw; }
+.rail-2 .more-photo-item:nth-child(3) { width: 12.92vw; margin-left: 2.78vw; margin-top: 2.85vw;  }
+.rail-2 .more-photo-item:nth-child(4) { width: 10.49vw; margin-left: 2.78vw; margin-top: 1.94vw;  }
+.rail-2 .more-photo-item:nth-child(5) { width: 12.5vw;  margin-left: 6.53vw; margin-top: 4.31vw;  }
+
+/* ── Profile section: foto grande esquerda + texto direita ── */
+.more-block--profile {
+  display: flex;
+  align-items: flex-start;
+}
+
+.more-profile-img {
+  flex-shrink: 0;
+  width: 30.35vw;   /* 437/1440 */
+  margin-left: 18.82vw;  /* 271/1440 */
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.more-profile-img img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 437 / 611;
+  object-fit: cover;
+}
+
+.more-profile-text {
+  flex: 1;
+  margin-left: 1.67vw;
+  padding-right: var(--mo-margin);
+}
+
+.more-profile-text .more-bio + .more-bio {
+  margin-top: 1.5rem;
+}
 
 /* ── Career section ── */
 /* ── Career: desktop 2-col grid ──
