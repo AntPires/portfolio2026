@@ -1123,24 +1123,40 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   /* ── Overlay: close button mais próximo do canto ── */
   .more-close {
     top: 20px;
-    right: 24px;
+    right: 20px;
+    padding: 12px;
   }
 
-  /* ── Overlay intro: sem imagem no mobile, texto full-width ── */
+  /* ── Overlay intro: 100svh, texto ancorado na base ── */
   .more-intro {
-    padding: 0 6vw 10vw;
+    min-height: 100svh;
+    height: auto;
+    padding: 0 6.4vw clamp(3rem, 8vw, 5rem);
     justify-content: flex-end;
+    overflow: visible; /* evita corte em telas menores */
   }
 
   .more-intro-image { display: none; }
 
   .more-intro-text { width: 100%; }
 
+  /* Título do intro menor no mobile: 32px / 36px conforme Figma */
+  .more-title {
+    font-size: 2rem; /* 32px fixo — não escala com vw no mobile */
+    line-height: 1.125;
+  }
+
   /* ── Overlay blocks: margens laterais simples ── */
   .more-block--col1,
   .more-block--col3 {
-    margin-left: 6vw;
-    width: calc(100% - 12vw);
+    margin-left: 6.4vw;
+    width: calc(100% - 12.8vw);
+  }
+
+  /* Bio corrido (seção 2): 16px / 28px conforme Figma mobile */
+  .more-block--col1 .more-bio {
+    font-size: 1rem;       /* 16px */
+    line-height: 1.75;     /* 28/16 */
   }
 
   /* ── Overlay: gap maior entre blocos ── */
@@ -1150,56 +1166,70 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .more-caption { display: none !important; }
 
   .more-block--rail {
-    margin-left: 6vw;
-    margin-right: 6vw;
-    width: calc(100% - 12vw);
+    margin-left: 6.4vw;
+    margin-right: 6.4vw;
+    width: calc(100% - 12.8vw);
   }
 
-  /* Photo rails: grid 2 colunas em mobile
-     !important necessário pois os seletores :nth-child() da base
-     têm especificidade maior e sobrescrevem sem ele. */
+  /* Photo rails: faixa horizontal solta, proporcional ao Figma mobile
+     !important necessário para sobrescrever nth-child de maior especificidade */
   .more-rail {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     overflow-x: visible;
-    gap: 8px;
-    align-items: flex-start;
-  }
-
-  /* Reset de todos os offsets do layout solto do desktop */
-  .rail-1 .more-photo-item,
-  .rail-2 .more-photo-item {
-    width: calc(50% - 4px) !important;
-    margin-left: 0 !important;
-    margin-top: 0 !important;
-    flex-shrink: unset;
-  }
-
-  /* Oculta "still learning from her" (1º item do rail-2) — mantém 2x2 */
-  .rail-2 .more-photo-item:nth-child(1) {
-    display: none !important;
+    gap: 3px;
+    align-items: flex-end; /* base comum, margin-bottom cria o escalonamento */
   }
 
   /* Fotos em proporção natural no mobile — sem altura fixa */
   .more-photo-item img {
     height: auto;
-    aspect-ratio: unset;
   }
 
-  /* ── Seção de perfil no mobile: oculta foto, texto full-width ── */
+  /* Reset de offsets desktop */
+  .rail-1 .more-photo-item,
+  .rail-2 .more-photo-item {
+    flex-shrink: 0;
+    margin-left: 0 !important;
+    margin-top:  0 !important;
+  }
+
+  /* Rail 1: larguras e escalonamento vertical conforme Figma 375px */
+  .rail-1 .more-photo-item:nth-child(1) { width: 24.5vw !important; margin-bottom: 6px; }
+  .rail-1 .more-photo-item:nth-child(2) { width: 15.5vw !important; margin-bottom: 19px; }
+  .rail-1 .more-photo-item:nth-child(3) { width: 32.5vw !important; margin-bottom: 0; }
+  .rail-1 .more-photo-item:nth-child(4) { width: 12vw  !important; margin-bottom: 27px; }
+
+  /* Rail 2: mostra todas as 5 fotos (inclusive "still learning"), faixa solta */
+  .rail-2 .more-photo-item:nth-child(1) { display: flex !important; width: 22.7vw !important; margin-bottom: 22px; }
+  .rail-2 .more-photo-item:nth-child(2) { width: 12.5vw !important; margin-bottom: 9px; }
+  .rail-2 .more-photo-item:nth-child(3) { width: 17.6vw !important; margin-bottom: 27px; }
+  .rail-2 .more-photo-item:nth-child(4) { width: 14.1vw !important; margin-bottom: 26px; }
+  .rail-2 .more-photo-item:nth-child(5) { width: 17.1vw !important; margin-bottom: 0; }
+
+  /* ── Seção de perfil no mobile: foto pequena + texto abaixo ── */
   .more-block--profile {
     display: block;
-    margin-left: 6vw;
-    width: calc(100% - 12vw);
+    margin-left: 6.4vw;
+    width: calc(100% - 12.8vw);
   }
 
+  /* profile-big: ~45.6% da tela (171/375), alinhada à esquerda */
   .more-profile-img {
-    display: none;
+    display: block;
+    width: 45.6vw;
+    margin-left: 0;
   }
 
   .more-profile-text {
-    margin-left: 0;
-    padding-right: 0;
     width: 100%;
+    margin-left: 0;
+    margin-top: 2rem;
+  }
+
+  /* Profile text mantém 20px / 36px no mobile (= desktop) */
+  .more-profile-text .more-bio {
+    font-size: 1.25rem;  /* 20px */
+    line-height: 1.8;
   }
 
   /* Career: volta para layout em bloco no mobile */
