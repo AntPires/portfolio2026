@@ -85,6 +85,8 @@ body {
   font-weight: 300;
   background-color: var(--color-cream);
   color: var(--color-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.6s ease, color 0.6s ease;
 }
 
@@ -238,13 +240,13 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   padding-top: 24px;
   padding-bottom: 72px;
 
-  gap: 6vw;
+  gap: 4vw;
   transition: gap          0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
               border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .work-row:hover {
-  gap: 5vw;
+  gap: 3vw;
   border-top-color: var(--color-cream);
 }
 
@@ -266,21 +268,47 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .work-row:hover .work-arrow {
-  opacity: 1;
-  transform: translate(0, -50%);
+  opacity: 0;
+  transform: translate(-4px, calc(-50% + 6px));
 }
 
-/* Imagem do case — visível apenas no mobile, oculta no desktop/tablet */
+/* Imagem do case — oculta por padrão, aparece no hover desktop */
 .work-img {
-  display: none;
+  flex-shrink: 0;
+  margin-left: auto;  /* empurra para a borda direita do conteúdo */
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: width   0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.work-img img {
+  display: block;
+  width: 276px;
+  height: 276px;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.work-row:hover .work-img {
+  width: 276px;
+  opacity: 1;
+}
+
+/* Coluna combinada: data + empresa empilhados */
+.work-meta {
+  flex-shrink: 0;
+  width: 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .work-date,
 .work-company {
-  flex-shrink: 0;
   font-family: 'Delight', sans-serif;
   line-height: 24px;
-  width: 10%;
 }
 
 .work-date    { font-size: 16px; color: #a3a3a3; }
@@ -301,8 +329,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .work-product-list { color: var(--color-cream); }
 
 .work-desc {
-  width: 50%;       /* largura fixa — não muda no hover, só o gap diminui */
-  flex-shrink: 0;
+  width: 50%;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -994,8 +1021,14 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   /* Work rows: remove hover gap animation e border color change */
   .work-row:hover {
-    gap: 6vw;
+    gap: 4vw;
     border-top-color: #2c2c2c;
+  }
+
+  /* Imagem: não expande em touch/tablet */
+  .work-row:hover .work-img {
+    width: 0;
+    opacity: 0;
   }
 
   /* Seta sempre visível (sem hover) — centrada no meio da row (tablet).
@@ -1062,6 +1095,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     padding-bottom: 40px;
   }
 
+  .work-meta {
+    width: 100%;
+    flex-shrink: unset;
+  }
+
   .work-date,
   .work-company,
   .work-products,
@@ -1073,11 +1111,14 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .work-company { font-size: 20px; margin-top: -10px; }
   .work-body    { font-size: 18px; line-height: 1.5; }
 
-  /* Imagem do case — exibida no mobile após o texto */
+  /* Imagem do case — exibida no mobile após o texto (reset do comportamento desktop) */
   .work-img {
     display: block;
+    width: 100% !important;
     max-width: 100%;
     overflow: hidden;
+    opacity: 1 !important;
+    transition: none;
   }
   .work-img img {
     display: block;
