@@ -1176,7 +1176,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   /* ── Nav mobile: logo + nome + meta menores ── */
   .nav-identity { gap: 3px; }
-  .nav-meta { font-size: 0.625rem; opacity: 1; } /* ~10px, sem opacidade reduzida */
+  .nav-meta { font-size: 0.625rem; } /* ~10px */
 
   /* ── Overlay: close button mais próximo do canto ── */
   .more-close {
