@@ -1174,8 +1174,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   /* ── Contact: texto menor no mobile ── */
   .contact-row-text { font-size: 1.5rem; } /* 24px — apenas no mobile */
 
-  /* ── Nav mobile: só o logo ── */
-  .nav-identity { display: none; }
+  /* ── Nav mobile: logo + nome, sem a linha de meta ── */
+  .nav-meta { display: none; }
 
   /* ── Overlay: close button mais próximo do canto ── */
   .more-close {

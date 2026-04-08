@@ -163,37 +163,37 @@ function initOverlayAnimations() {
 
     // Bio 1
     gsap.from('.more-block--col1 .more-bio', {
-      scrollTrigger: { ...sc, trigger: '.more-block--col1', start: 'top 85%', toggleActions: 'play none none none' },
+      scrollTrigger: { ...sc, trigger: '.more-block--col1', start: 'top 70%', toggleActions: 'play none none none' },
       opacity: 0, y: 20, duration: 0.7, stagger: 0.15, ease: 'power2.out', clearProps: 'all',
     });
 
     // Rail 1 — fotos soltas
     gsap.from('.rail-1 .more-photo-item', {
-      scrollTrigger: { ...sc, trigger: '.rail-1', start: 'top 90%', toggleActions: 'play none none none' },
+      scrollTrigger: { ...sc, trigger: '.rail-1', start: 'top 72%', toggleActions: 'play none none none' },
       opacity: 0, y: 28, duration: 0.65, stagger: 0.1, ease: 'power2.out', clearProps: 'all',
     });
 
     // Profile — foto grande
     gsap.from('.more-profile-img', {
-      scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 85%', toggleActions: 'play none none none' },
+      scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 70%', toggleActions: 'play none none none' },
       opacity: 0, y: 24, duration: 0.85, ease: 'power2.out', clearProps: 'all',
     });
 
     // Profile — parágrafos de texto
     gsap.from('.more-profile-text .more-bio', {
-      scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 80%', toggleActions: 'play none none none' },
+      scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 68%', toggleActions: 'play none none none' },
       opacity: 0, y: 16, duration: 0.65, stagger: 0.12, ease: 'power2.out', clearProps: 'all',
     });
 
     // Career — bloco completo
     gsap.from('.more-career', {
-      scrollTrigger: { ...sc, trigger: '.more-career', start: 'top 88%', toggleActions: 'play none none none' },
+      scrollTrigger: { ...sc, trigger: '.more-career', start: 'top 72%', toggleActions: 'play none none none' },
       opacity: 0, y: 20, duration: 0.7, ease: 'power2.out', clearProps: 'all',
     });
 
     // Rail 2 — fotos soltas
     gsap.from('.rail-2 .more-photo-item', {
-      scrollTrigger: { ...sc, trigger: '.rail-2', start: 'top 90%', toggleActions: 'play none none none' },
+      scrollTrigger: { ...sc, trigger: '.rail-2', start: 'top 72%', toggleActions: 'play none none none' },
       opacity: 0, y: 28, duration: 0.65, stagger: 0.1, ease: 'power2.out', clearProps: 'all',
     });
   });
@@ -418,7 +418,7 @@ gsap.utils.toArray('.work-row').forEach((row, i) => {
   gsap.from(row, {
     scrollTrigger: {
       trigger: row,
-      start: 'top 88%',
+      start: 'top 72%',
       toggleActions: 'play none none none',
     },
     opacity: 0,
@@ -435,7 +435,7 @@ gsap.utils.toArray('.section-title, .work-subtitle').forEach(el => {
   gsap.from(el, {
     scrollTrigger: {
       trigger: el,
-      start: 'top 90%',
+      start: 'top 72%',
       toggleActions: 'play none none none',
     },
     opacity: 0,
