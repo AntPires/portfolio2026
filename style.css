@@ -1060,9 +1060,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .contact-row:hover .contact-row-text { transform: none; }
   .contact-row-icon { display: block; }
 
-  /* About: botão já é inline-flex globalmente; garante align */
+  /* About: botão menor no mobile */
   .about-cta {
     align-self: flex-start;
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
   }
 
   /* Overlay captions: sempre visíveis (sem hover para revelar) */
