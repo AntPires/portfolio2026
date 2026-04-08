@@ -430,8 +430,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   max-width: 85%;
 }
 
-.about-text strong {
-  font-weight: 900;
+.about-serif {
+  font-family: 'Hedvig Letters Serif', serif;
 }
 
 
@@ -451,12 +451,13 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   left: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: 100px;
-  font-size: 0.875rem;
-  font-weight: 300;
-  letter-spacing: 0.01em;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 48px;
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
   white-space: nowrap;
   pointer-events: none;
   z-index: 9999;
@@ -934,29 +935,40 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   transform: translateX(-50%) translateY(0);
 }
 
-/* ─── About: CTA button (mobile-only) ──────────
-   No desktop fica display:none — substitui o hover
-   no mobile onde não há cursor customizado.        */
+/* ─── About: CTA button ─────────────────────────
+   Sempre visível. No desktop, faz fade-out no hover
+   do section enquanto o cursor-label assume.       */
 .about-cta {
-  display: none;
+  display: inline-flex;
+  align-self: flex-start;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-top: clamp(2rem, 6vw, 3rem);
-  padding: 0.7rem 1.25rem;
-  border-radius: 100px;
+  padding: 1rem 1.5rem;
+  border-radius: 48px;
   background: var(--color-dark);
   color: var(--color-cream);
-  font-family: 'Delight', sans-serif;
-  font-size: var(--text-nav);
-  font-weight: 300;
-  letter-spacing: 0.01em;
+  font-family: 'Hedvig Letters Serif', serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  white-space: nowrap;
+  font-weight: 400;
   border: none;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  opacity: 1;
+  transition: opacity 0.35s ease;
 }
 
 .about-cta:active {
   opacity: 0.7;
+}
+
+/* Desktop: botão some quando o cursor-label assume */
+@media (hover: hover) {
+  #about:hover .about-cta {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 /* ─── Contact: table layout ─────────────────── */
@@ -1048,9 +1060,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .contact-row:hover .contact-row-text { transform: none; }
   .contact-row-icon { display: block; }
 
-  /* About: CTA button visível (substitui o hover que abre o overlay) */
+  /* About: botão já é inline-flex globalmente; garante align */
   .about-cta {
-    display: inline-flex;
     align-self: flex-start;
   }
 
