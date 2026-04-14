@@ -39,6 +39,32 @@ lenis.on('scroll', ({ scroll, direction }) => {
   }
 });
 
+// ─── Snap suave entre seções ──────────────────
+// Após parar de scrollar por 120ms, snapa para a seção mais próxima do centro.
+// Só snapa as seções de altura 100svh (hero + about), não work/contact.
+const snapSections = [...document.querySelectorAll('.section[data-bg="hero"], .section[data-bg="green"]')];
+let snapTimer;
+lenis.on('scroll', () => {
+  clearTimeout(snapTimer);
+  snapTimer = setTimeout(() => {
+    const mid = window.scrollY + window.innerHeight / 2;
+    let closest = null;
+    let minDist = Infinity;
+    snapSections.forEach(s => {
+      const sTop = s.getBoundingClientRect().top + window.scrollY;
+      const sMid = sTop + s.offsetHeight / 2;
+      const dist = Math.abs(mid - sMid);
+      if (dist < minDist) { minDist = dist; closest = s; }
+    });
+    // Só snapa se o centro da seção estiver a menos de 50vh de distância.
+    // Garante que o snap não puxa o usuário de volta quando já está em outra seção.
+    if (closest && minDist < window.innerHeight * 0.5) {
+      const targetY = closest.getBoundingClientRect().top + window.scrollY;
+      lenis.scrollTo(targetY, { duration: 0.8, easing: t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2 });
+    }
+  }, 120);
+});
+
 // ─── Background transition on scroll ────────
 const bgObserver = new IntersectionObserver(
   (entries) => {
@@ -110,10 +136,9 @@ function hideCursor() {
 
 // Cursor in about section
 aboutSection.addEventListener('mousemove',  placeCursor);
-aboutSection.addEventListener('mouseenter', () => showCursor('find out more'));
+aboutSection.addEventListener('mouseenter', () => showCursor('more about me'));
 aboutSection.addEventListener('mouseleave', hideCursor);
 
-// Wave cursor listeners are attached after DOM manipulation in initHeroBlurStagger below
 
 // ─── Overlay: blur stagger em .more-title-serif ("how things could…") ─────────
 //
@@ -121,35 +146,30 @@ aboutSection.addEventListener('mouseleave', hideCursor);
 // O resto do título aparece imediatamente.
 // Timings lidos das variáveis CSS em .more-title-serif — ajuste lá.
 // ─────────────────────────────────────────────────────────────────────────────
-const overlaySerifEl   = moreOverlay.querySelector('.more-title-serif');
-const overlaySerifText = overlaySerifEl ? overlaySerifEl.textContent : null;
+const overlayTitleEl   = moreOverlay.querySelector('.more-title--animated');
+const overlayTitleHTML = overlayTitleEl ? overlayTitleEl.innerHTML : null;
 
 function playOverlayBlur() {
-  if (!overlaySerifEl || !overlaySerifText) return;
+  if (!overlayTitleEl) return;
 
-  const style     = getComputedStyle(overlaySerifEl);
-  const stagger   = parseFloat(style.getPropertyValue('--stagger'))       || 0.03;
-  const initDelay = parseFloat(style.getPropertyValue('--initial-delay')) || 0.25;
+  // Reutiliza o splitWords já definido — preserva <span class="more-title-serif"> intacto
+  splitWords(overlayTitleEl);
 
-  overlaySerifEl.innerHTML = '';
-  let charIndex = 0;
-
-  [...overlaySerifText].forEach(char => {
-    if (char === ' ') {
-      overlaySerifEl.appendChild(document.createTextNode(' '));
-    } else {
-      const span = document.createElement('span');
-      span.className = 'overlay-char';
-      span.style.animationDelay = `${(initDelay + charIndex * stagger).toFixed(3)}s`;
-      span.textContent = char;
-      overlaySerifEl.appendChild(span);
-      charIndex++;
-    }
+  gsap.from(overlayTitleEl.querySelectorAll('.word'), {
+    opacity: 0,
+    y: 28,
+    filter: 'blur(6px)',
+    duration: 0.55,
+    ease: 'power3.out',
+    stagger: 0.035,
+    clearProps: 'all',
   });
 }
 
 function resetOverlayBlur() {
-  if (overlaySerifEl) overlaySerifEl.textContent = overlaySerifText;
+  if (overlayTitleEl && overlayTitleHTML) {
+    overlayTitleEl.innerHTML = overlayTitleHTML;
+  }
 }
 
 // ── Overlay: ScrollTrigger animations (scroller = moreOverlay) ──────────────
@@ -164,37 +184,37 @@ function initOverlayAnimations() {
     // Bio 1
     gsap.from('.more-block--col1 .more-bio', {
       scrollTrigger: { ...sc, trigger: '.more-block--col1', start: 'top 70%', toggleActions: 'play none none none' },
-      opacity: 0, y: 20, duration: 0.7, stagger: 0.15, ease: 'power2.out', clearProps: 'all',
+      opacity: 0, y: 28, duration: 0.7, stagger: 0.15, ease: 'power3.out', clearProps: 'all',
     });
 
-    // Rail 1 — fotos soltas
+    // Rail 1 — fotos com escala
     gsap.from('.rail-1 .more-photo-item', {
       scrollTrigger: { ...sc, trigger: '.rail-1', start: 'top 72%', toggleActions: 'play none none none' },
-      opacity: 0, y: 28, duration: 0.65, stagger: 0.1, ease: 'power2.out', clearProps: 'all',
+      opacity: 0, y: 32, scale: 0.97, duration: 0.65, stagger: 0.1, ease: 'power3.out', clearProps: 'all',
     });
 
     // Profile — foto grande
     gsap.from('.more-profile-img', {
       scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 70%', toggleActions: 'play none none none' },
-      opacity: 0, y: 24, duration: 0.85, ease: 'power2.out', clearProps: 'all',
+      opacity: 0, y: 32, scale: 0.98, duration: 0.85, ease: 'power3.out', clearProps: 'all',
     });
 
-    // Profile — parágrafos de texto
+    // Profile — parágrafos
     gsap.from('.more-profile-text .more-bio', {
       scrollTrigger: { ...sc, trigger: '.more-block--profile', start: 'top 68%', toggleActions: 'play none none none' },
-      opacity: 0, y: 16, duration: 0.65, stagger: 0.12, ease: 'power2.out', clearProps: 'all',
+      opacity: 0, y: 20, duration: 0.65, stagger: 0.12, ease: 'power3.out', clearProps: 'all',
     });
 
-    // Career — bloco completo
+    // Career
     gsap.from('.more-career', {
       scrollTrigger: { ...sc, trigger: '.more-career', start: 'top 72%', toggleActions: 'play none none none' },
-      opacity: 0, y: 20, duration: 0.7, ease: 'power2.out', clearProps: 'all',
+      opacity: 0, y: 24, duration: 0.7, ease: 'power3.out', clearProps: 'all',
     });
 
-    // Rail 2 — fotos soltas
+    // Rail 2 — fotos com escala
     gsap.from('.rail-2 .more-photo-item', {
       scrollTrigger: { ...sc, trigger: '.rail-2', start: 'top 72%', toggleActions: 'play none none none' },
-      opacity: 0, y: 28, duration: 0.65, stagger: 0.1, ease: 'power2.out', clearProps: 'all',
+      opacity: 0, y: 32, scale: 0.97, duration: 0.65, stagger: 0.1, ease: 'power3.out', clearProps: 'all',
     });
   });
 }
@@ -208,7 +228,15 @@ async function openOverlay() {
   nav.style.display = 'none';
   hideCursor();
   requestAnimationFrame(() => {
+    // Botão fechar — desce do topo antes do título
+    gsap.fromTo('.more-close',
+      { opacity: 0, y: -12 },
+      { opacity: 0.85, y: 0, duration: 0.45, ease: 'power3.out', delay: 0.1 }
+    );
+
+    // Título — word split com blur (mesma linguagem da página principal)
     playOverlayBlur();
+
     ScrollTrigger.refresh();
     initOverlayAnimations();
   });
@@ -259,7 +287,18 @@ const contactActions = [
 
 const contactRows     = [...document.querySelectorAll('#contact .contact-row')];
 const contactSection  = document.getElementById('contact');
+const elevatorBtn     = document.getElementById('elevator');
 let activeContactIdx  = -1;
+
+// ─── Elevator button: visível apenas na seção contact ────────────────────────
+new IntersectionObserver(
+  (entries) => entries.forEach(e => elevatorBtn.classList.toggle('visible', e.isIntersecting)),
+  { threshold: 0.1 }
+).observe(contactSection);
+
+elevatorBtn.addEventListener('click', () => {
+  lenis.scrollTo(0, { duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+});
 let contactSwitchTimer = null;
 let isCopiedState     = false;
 let copiedHideTimer   = null;
@@ -350,66 +389,38 @@ contactRows.forEach((row, idx) => {
 });
 
 
-// ─── Hero: blur stagger — apenas na frase final (.hero-animated) ─────────────
-//
-// Só o span.hero-animated é quebrado em chars com a animação blur→nítido.
-// Os timings são lidos das variáveis CSS em .hero-text (ajuste lá):
-//   --stagger        → intervalo entre chars
-//   --initial-delay  → pausa antes do primeiro char
-// ─────────────────────────────────────────────────────────────────────────────
-(async function initHeroBlurStagger() {
-  await document.fonts.ready;
+// ─── Hero: entrada orquestrada (timeline) ────────────────────────────────────
+document.fonts.ready.then(() => {
+  const heroText = document.querySelector('.hero-text');
+  if (heroText) heroText.classList.add('fonts-ready');
 
-  const heroText    = document.querySelector('.hero-text');
-  const animTarget  = document.querySelector('.hero-animated');
-  if (!heroText || !animTarget) return;
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-  const style     = getComputedStyle(heroText);
-  const stagger   = parseFloat(style.getPropertyValue('--stagger'))       || 0.01;
-  const initDelay = parseFloat(style.getPropertyValue('--initial-delay')) || 0.1;
+  // 1. Nav desce do topo
+  tl.fromTo('.nav',
+    { opacity: 0, y: -20 },
+    { opacity: 1, y: 0, duration: 0.55 }
+  );
 
-  // Snapshot childNodes before clearing — preserves element nodes like <a class="wave-hover">
-  const children = [...animTarget.childNodes];
-  animTarget.innerHTML = '';
-  let charIndex = 0;
+  // 2. Coluna esquerda: avatar e bio sobem juntos
+  tl.fromTo('.hero-avatar',
+    { opacity: 0, y: 20 },
+    { opacity: 1, y: 0, duration: 0.6 },
+    '-=0.25'
+  );
+  tl.fromTo('.hero-bio',
+    { opacity: 0, y: 20 },
+    { opacity: 1, y: 0, duration: 0.6 },
+    '-=0.55'
+  );
 
-  function splitTextIntoChars(container, text) {
-    [...text].forEach(char => {
-      if (char === ' ') {
-        container.appendChild(document.createTextNode(' '));
-      } else {
-        const span = document.createElement('span');
-        span.className = 'hero-char';
-        span.style.animationDelay = `${(initDelay + charIndex * stagger).toFixed(3)}s`;
-        span.textContent = char;
-        container.appendChild(span);
-        charIndex++;
-      }
-    });
-  }
-
-  children.forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      splitTextIntoChars(animTarget, node.textContent);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Clone the element (e.g. <a class="wave-hover">) without its children
-      const clone = node.cloneNode(false);
-      splitTextIntoChars(clone, node.textContent);
-      animTarget.appendChild(clone);
-    }
-  });
-
-  // Re-attach wave cursor listeners to the newly created clone
-  const waveLinkNew = animTarget.querySelector('.wave-hover');
-  if (waveLinkNew) {
-    waveLinkNew.addEventListener('mousemove',  placeCursor);
-    waveLinkNew.addEventListener('mouseenter', () => showCursor('check us out', 'contact-link'));
-    waveLinkNew.addEventListener('mouseleave', hideCursor);
-  }
-
-  // Revela o hero agora que a fonte está carregada
-  heroText.classList.add('fonts-ready');
-})();
+  // 3. Hero text — foco fotográfico: blur → nitidez
+  tl.fromTo('.hero-text',
+    { opacity: 0, y: 36, filter: 'blur(8px)' },
+    { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 0.95 },
+    '-=0.3'
+  );
+});
 
 // ─── ScrollTrigger: animações de entrada ─────────────────────────────────────
 
@@ -423,6 +434,7 @@ gsap.utils.toArray('.work-row').forEach((row, i) => {
     },
     opacity: 0,
     y: 20,
+    scale: 0.97,
     duration: 0.55,
     delay: i * 0.06,
     ease: 'power2.out',
@@ -446,16 +458,63 @@ gsap.utils.toArray('.section-title, .work-subtitle').forEach(el => {
   });
 });
 
-// About text — fade suave
-gsap.from('.about-text', {
-  scrollTrigger: {
-    trigger: '#about',
-    start: 'top 65%',
-    toggleActions: 'play none none none',
-  },
+// About text — reveal por palavras (word split)
+function splitWords(el) {
+  // Itera apenas text nodes para preservar spans filhos (.about-bold etc.)
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+  const textNodes = [];
+  let node;
+  while ((node = walker.nextNode())) textNodes.push(node);
+
+  textNodes.forEach(tn => {
+    const frag = document.createDocumentFragment();
+    tn.textContent.split(/(\s+)/).forEach(token => {
+      if (/^\s+$/.test(token)) {
+        frag.appendChild(document.createTextNode(token));
+      } else if (token) {
+        const wrap = document.createElement('span');
+        wrap.className = 'word-wrap';
+        const inner = document.createElement('span');
+        inner.className = 'word';
+        inner.textContent = token;
+        wrap.appendChild(inner);
+        frag.appendChild(wrap);
+      }
+    });
+    tn.replaceWith(frag);
+  });
+}
+
+const aboutTextEl = document.querySelector('.about-text');
+if (aboutTextEl) {
+  splitWords(aboutTextEl);
+
+  gsap.from('#about .word', {
+    opacity: 0,
+    y: 24,
+    duration: 0.55,
+    ease: 'power3.out',
+    stagger: 0.04,
+    clearProps: 'all',
+    scrollTrigger: {
+      trigger: '#about',
+      start: 'top 60%',
+      toggleActions: 'play none none none',
+    },
+  });
+}
+
+// About CTA button — entra depois das palavras
+gsap.from('.about-cta', {
   opacity: 0,
-  y: 12,
-  duration: 0.7,
+  y: 16,
+  duration: 0.5,
   ease: 'power2.out',
   clearProps: 'all',
+  scrollTrigger: {
+    trigger: '#about',
+    start: 'top 55%',
+    toggleActions: 'play none none none',
+  },
 });
+

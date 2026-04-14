@@ -16,6 +16,30 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Delight';
+  src: url('fonts/Delight-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Landour';
+  src: url('fonts/Landour-RegularDisplay.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Landour';
+  src: url('fonts/Landour-BoldDisplay.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ─── Type scale (fluid vw, ref: 1440px → max @ 2160px) ───── */
 :root {
   --text-xs:      clamp(0.65rem, 0.83vw,  1rem);     /* 12px → 18px @ 2160 */
@@ -29,6 +53,9 @@
   --color-cream:  #f5f4f0;
   --color-dark:   #1e1e20;
   --color-white:  #ffffff;
+
+  /* Grid: 120px em 1440px → escala com vw */
+  --page-margin: 8.333vw;
 
   /* ─── Noise ──────────────────────────────────
      Ajuste os valores abaixo para controlar a textura:
@@ -123,7 +150,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.8vw 6vw;
+  padding: 3.889vw var(--page-margin);  /* 56px top em 1440px */
+  opacity: 0;                 /* GSAP anima para 1 na entrada */
   transform: translateY(0);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -132,66 +160,33 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   transform: translateY(-100%);
 }
 
-.nav-logo {
-  width: clamp(1.8rem, 2.8vw, 3rem);
-  height: auto;
-  color: var(--color-dark);
-  transition: color 0.6s ease;
-}
-
-.nav-right {
+.nav-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  padding: 8px;
   display: flex;
   align-items: center;
-  gap: 32px;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
 }
 
-/* ── Nav identity ───────────────────────────── */
-.nav-identity {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  font-family: 'Delight', sans-serif;
-  font-size: var(--text-nav);
-  font-weight: 300;
-  letter-spacing: 0.28px;
-}
-
-.nav-name {
-  color: inherit;
-  line-height: 16px;
-}
-
-.nav-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  opacity: 0.45;
-  color: inherit;
-  line-height: 16px;
-}
-
-.nav-sun {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  display: none; /* oculto temporariamente — pode reativar removendo esta linha */
-}
-
-#nav-time {
-  display: none; /* oculto temporariamente — pode reativar removendo esta linha */
-}
+.nav-menu:hover { opacity: 1; }
+.nav-menu[disabled] { cursor: default; opacity: 0.5; }
 
 
 /* ─── Sections ─────────────────────────────── */
 .section {
   height: 100svh;
   /* scroll-snap-align: removido — Lenis gerencia o scroll */
-  padding: 6vw;
+  padding: 6vw var(--page-margin);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index: 1;
 }
 
 #work.section,
@@ -212,17 +207,20 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .section-title {
-  font-size: var(--text-display);
-  font-weight: 300;
-  line-height: 1.08;
+  font-family: 'Landour', sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5vw, 6.75rem);  /* 72px @ 1440 → 108px @ 2160 */
+  line-height: 1.111;
   letter-spacing: -0.02em;
+  color: var(--color-cream);
   max-width: 49%;
   margin-bottom: clamp(1rem, 2vw, 2rem);
 }
 
 .work-subtitle {
-  font-family: 'Hedvig Letters Serif', serif;
-  font-size: 16px;
+  font-family: 'Delight', sans-serif;
+  font-size: clamp(1.25rem, 1.667vw, 2.25rem);  /* 24px @ 1440 → 36px @ 2160 */
+  line-height: 1.5;
   font-weight: 400;
   color: #a3a3a3;
   margin-bottom: clamp(3rem, 7vw, 8rem);
@@ -285,14 +283,16 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .work-img img {
   display: block;
-  width: 276px;
+  width: 100%;       /* preenche o container; object-fit faz o crop */
   height: 276px;
   object-fit: cover;
   border-radius: 0;
 }
 
 .work-row:hover .work-img {
-  width: 276px;
+  /* Espaço disponível = 100% - meta(10%) - products(10%) - desc(50%) - 3 gaps(12vw)
+     Nunca maior que 276px (tamanho ideal da imagem). */
+  width: min(276px, calc(30% - 12vw));
   opacity: 1;
 }
 
@@ -308,11 +308,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .work-date,
 .work-company {
   font-family: 'Delight', sans-serif;
-  line-height: 24px;
+  line-height: 1.5;
 }
 
-.work-date    { font-size: 16px; color: #a3a3a3; }
-.work-company { font-size: 24px; color: var(--color-cream); }
+.work-date    { font-size: clamp(0.875rem, 1.111vw, 1.5rem);   color: #a3a3a3; }          /* 16px @ 1440 */
+.work-company { font-size: clamp(1.25rem, 1.667vw, 2.25rem);   color: var(--color-cream); } /* 24px @ 1440 */
 
 .work-products {
   width: 10%;
@@ -321,8 +321,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   flex-direction: column;
   gap: 16px;
   font-family: 'Delight', sans-serif;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: clamp(0.875rem, 1.111vw, 1.5rem);  /* 16px @ 1440 */
+  line-height: 1.5;
 }
 
 .work-label        { color: #a3a3a3; }
@@ -330,79 +330,98 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .work-desc {
   width: 50%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .work-body {
-  font-family: 'Hedvig Letters Serif', serif;
-  font-size: clamp(1.25rem, 1.667vw, 2.25rem); /* 24px → 36px @ 2160px */
+  font-family: 'Delight', sans-serif;
+  font-size: clamp(1.25rem, 1.667vw, 2.25rem); /* 24px @ 1440px → 36px @ 2160px */
   line-height: 1.5;
   color: var(--color-cream);
 }
 
 /* ─── Hero ─────────────────────────────────── */
-/* Texto ancorado na borda inferior — fica naturalmente abaixo do centro */
 .section[data-bg="hero"] {
-  justify-content: flex-end;
-  padding-bottom: clamp(4rem, 12vw, 10rem);
-}
-
-/* Dot texture overlay — CSS radial-gradient, sem arquivo externo.
-   Equivalente ao fundo 16×16 do Figma com opacity 48%, mas
-   calibrado para ficar igualmente sutil sobre o fundo cream. */
-.section[data-bg="hero"]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, var(--color-dark) 1px, transparent 1px);
-  background-size: 16px 16px;
-  background-position: top left;
-  opacity: 0.07;
-  pointer-events: none;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .hero-content {
-  max-width: 80%;
+  position: absolute;
+  top: 33.33%;           /* 280/840 */
+  left: var(--page-margin);
+  right: var(--page-margin);
+  display: flex;
+  gap: 2%;
+}
+
+.hero-left {
+  width: 36.25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+}
+
+.hero-avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.hero-bio {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  font-family: 'Delight', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.75rem, 0.972vw, 1.25rem);    /* 14px @ 1440 → 21px @ 2160 */
+  line-height: 1.43;
+  color: var(--color-dark);
+  max-width: clamp(200px, 16.667vw, 320px);        /* 240px @ 1440 */
+}
+
+.hero-right {
+  width: 61.75%;
 }
 
 .hero-text {
-  opacity: 0; /* escondido até fontes carregarem — JS adiciona .fonts-ready */
-  font-size: var(--text-display);
-  font-weight: 300;
-  line-height: 1.1;
+  font-family: 'Landour', sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5vw, 6.75rem);  /* 72px @ 1440 → 108px @ 2160 */
+  line-height: 1.111;
   letter-spacing: -0.02em;
-
-  /* ── Blur stagger: ajuste estes valores para customizar a animação ── */
-  --blur-start:      10px;   /* blur inicial de cada caractere             */
-  --char-duration:   0.4s;   /* duração da transição por caractere         */
-  --stagger:         0.02s;  /* intervalo entre cada caractere             */
-  --initial-delay:   0.1s;   /* pausa antes do primeiro caractere aparecer */
+  text-wrap: balance;
+  color: var(--color-dark);
+  opacity: 0;
 }
 
-/* Hero visível após fontes carregarem */
 .hero-text.fonts-ready {
   opacity: 1;
 }
 
-/* Cada caractere recebe esta classe via JS */
-.hero-char {
-  display: inline;
-  opacity: 0;
-  animation: heroCharReveal var(--char-duration, 0.5s) ease-out both;
-  /* animation-delay é aplicado inline por JS */
+/* ── Dots layer — absoluto no fluxo da página, rola naturalmente ─
+   Começa no fim do hero (≈720/840 da altura) e desce pelo about.
+   Sem fixed, sem clip-path: aparece mais conforme o scroll avança. */
+#snap {
+  position: relative;
 }
 
-@keyframes heroCharReveal {
-  from {
-    opacity: 0;
-    filter: blur(var(--blur-start, 10px));
-  }
-  to {
-    opacity: 1;
-    filter: blur(0px);
-  }
+.dots-layer {
+  position: absolute;
+  top: calc(85.7svh - 8px);              /* recua meio tile — elimina faixa transparente na borda superior */
+  left: var(--page-margin);
+  right: var(--page-margin);
+  height: calc(114.3svh + 8px);          /* cobre até 200svh: (200 - 85.7)svh + 8px de recuo */
+  background-image: radial-gradient(circle, var(--color-dark) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+  opacity: 0.32;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .accent {
@@ -423,15 +442,40 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 /* ─── About ────────────────────────────────── */
+
+/* Centragem absoluta — não depende da altura da seção */
+#about .section-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(62.083vw, calc(100% - 2 * var(--page-margin)));  /* 894px @ 1440 → escala com o font */
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
 .about-text {
-  font-size: var(--text-md);
-  font-weight: 300;
-  line-height: 1.21;
+  font-family: 'Landour', sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4.444vw, 6rem);  /* 64px @ 1440 → 96px @ 2160 */
+  line-height: 1.094;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   max-width: 85%;
 }
 
-.about-serif {
-  font-family: 'Hedvig Letters Serif', serif;
+/* ─── About: word-split reveal ──────────────── */
+.word-wrap {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.word {
+  display: inline-block;
+}
+
+.about-bold {
+  font-weight: 700;
 }
 
 
@@ -454,8 +498,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   gap: 1rem;
   padding: 1rem 1.5rem;
   border-radius: 48px;
-  font-family: 'Hedvig Letters Serif', serif;
-  font-size: 1.25rem;
+  font-family: 'Delight', sans-serif;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1;
   white-space: nowrap;
@@ -668,21 +712,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   color: var(--color-cream);
 }
 
-/* ── Overlay title: blur stagger em .more-title-serif ── */
-/* Ajuste os 4 valores abaixo para customizar a animação  */
-.more-title-serif {
-  --blur-start:    8px;    /* blur inicial de cada caractere   */
-  --char-duration: 0.45s;  /* duração da transição por char    */
-  --stagger:       0.03s;  /* intervalo entre cada caractere   */
-  --initial-delay: 0.25s;  /* pausa antes do primeiro char     */
-}
-
-/* Cada char recebe esta classe via JS (reutiliza o keyframe do hero) */
-.overlay-char {
-  display: inline;
-  opacity: 0;
-  animation: heroCharReveal var(--char-duration, 0.45s) ease-out both;
-}
 
 
 /* ── Bio text (col 1 ou col 3, sempre 4 colunas largas) ── */
@@ -942,17 +971,16 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
-  gap: 1rem;
-  margin-top: clamp(2rem, 6vw, 3rem);
-  padding: 1rem 1.5rem;
+  gap: 16px;
+  padding: 16px 24px;
   border-radius: 48px;
   background: var(--color-dark);
   color: var(--color-cream);
-  font-family: 'Hedvig Letters Serif', serif;
-  font-size: 1.25rem;
+  font-family: 'Delight', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
   line-height: 1;
   white-space: nowrap;
-  font-weight: 400;
   border: none;
   cursor: pointer;
   opacity: 1;
@@ -961,6 +989,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .about-cta:active {
   opacity: 0.7;
+}
+
+/* Desktop: cursor já dá o feedback de cópia — toast desnecessário */
+@media (hover: hover) {
+  .copy-toast { display: none; }
 }
 
 /* Desktop: botão some quando o cursor-label assume */
@@ -986,9 +1019,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   cursor: none;
 }
 
-.contact-row:last-child {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-}
+/* Sem border-bottom — como nos cases, apenas stroke superior em cada linha */
 
 /* Ícone inline — oculto no desktop, visível no mobile */
 .contact-row-icon {
@@ -999,9 +1030,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .contact-row-text {
-  font-family: 'Delight', sans-serif;
+  font-family: 'Landour', sans-serif;
   font-size: var(--text-display);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--color-cream);
@@ -1010,7 +1041,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .contact-row-text strong {
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .contact-row:hover .contact-row-text {
@@ -1018,6 +1049,38 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 /* ─── Responsive ───────────────────────────── */
+
+/* ─── Elevator button ───────────────────────
+   Aparece apenas na seção contact (JS adiciona .visible).
+   Posição relativa às bordas direita e inferior. */
+.elevator-btn {
+  position: fixed;
+  bottom: 5.56vw;   /* 80px @ 1440px — mesmo que o × do overlay */
+  right: 5.56vw;
+  background: var(--color-green);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 32px;
+  padding: 16px;
+  cursor: pointer;
+  color: var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.elevator-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.elevator-btn:hover { opacity: 0.8; }
+
 
 /* ── Touch / no-hover: remove all mouse-only interactions ──────────────────
    @media (hover: none) apanha touch screens e stylus sem hover.
@@ -1166,11 +1229,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* ── Hero: bump para ~40px ── */
-  .hero-text { font-size: 2.5rem; }
-
-  /* ── Work: title maior, empilha produtos ocultos ── */
-  .section-title { font-size: 2.25rem; }
+  /* ── Work: empilha produtos ocultos ── */
   .work-products { display: none; }
 
   /* ── Contact: texto menor no mobile ── */
@@ -1351,11 +1410,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     top: max(80px, 5.5vw);
   }
 
-  /* ── Com fontes maiores, reduz largura dos blocos de texto
-     para evitar linhas longas demais (regra ~75-80 chars) ── */
-  .hero-content  { max-width: 70%; }   /* era 80% */
+  /* ── Com fontes vw, as proporções já se mantêm automaticamente.
+     Só reduz max-width dos elementos que têm container fixo. ── */
   .section-title { max-width: 42%; }   /* era 49% */
-  .about-text    { max-width: 65%; }   /* era 85% */
 
   /* Overlay: col1 com cap em px para não ficar infinito */
   .more-block--col1 {
