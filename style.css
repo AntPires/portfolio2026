@@ -549,7 +549,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   --mo-col4:     40.83vw;        /* 588/1440 — largura de 4 colunas */
   --mo-col1:     var(--mo-margin);             /* onde começa col 1 */
   --mo-col3:     29.58vw;        /* 426/1440 — onde começa col 3 */
-  --mo-photo-h:  clamp(8rem, 17.5vw, 15rem);  /* 252px ref */
 
   position: fixed;
   inset: 0;
@@ -766,9 +765,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-photo-item img {
   display: block;
   width: 100%;
-  height: var(--mo-photo-h);
+  height: auto;
   border-radius: 0;
-  object-fit: cover;
 }
 
 .more-caption {
@@ -1155,11 +1153,51 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     padding-top: max(5rem, 14vw);
   }
 
-  /* Hero */
-  .hero-content { max-width: 100%; }
+  /* Hero: coluna única */
+  .hero-content {
+    flex-direction: column;
+    gap: 72px;
+    top: 134px;
+    left: 6.4vw;
+    right: 6.4vw;
+  }
 
-  /* About */
-  .about-text { max-width: 100%; }
+  .hero-left {
+    width: 100%;
+    gap: 32px;
+    justify-content: flex-start;
+    min-height: 0;
+  }
+
+  .hero-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hero-bio {
+    gap: 16px;
+    line-height: 1.333; /* 16/12 */
+    max-width: 200px;
+  }
+
+  .hero-right { width: 100%; }
+
+  .hero-text {
+    font-size: 2.375rem; /* 38px */
+    line-height: 1.211;  /* 46/38 */
+  }
+
+  /* About: tipografia mobile */
+  #about .section-inner {
+    gap: 32px;
+    width: calc(100% - 12.8vw); /* respeita margens de 6.4vw em cada lado */
+  }
+
+  .about-text {
+    font-size: 2rem;     /* 32px */
+    line-height: 1.3125; /* 42/32 */
+    max-width: 100%;
+  }
 
   /* Section title */
   .section-title {
@@ -1223,7 +1261,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   #work.section { padding-bottom: max(3rem, 8vw); }
 
   /* ── Nav: mais espaço do topo e logo maior ── */
-  .nav { padding: 20px 6vw; }
+  .nav { padding: 20px 6vw; justify-content: flex-end; }
   .nav-logo { width: 2.75rem; } /* 44px */
 
   /* ── Hero: permite crescer além de 100svh se necessário ── */
