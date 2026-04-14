@@ -1170,14 +1170,15 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   }
 
   .hero-avatar {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 
   .hero-bio {
+    font-size: 0.875rem; /* 14px */
     gap: 16px;
-    line-height: 1.333; /* 16/12 */
-    max-width: 200px;
+    line-height: 1.429; /* 20/14 */
+    max-width: 240px;
   }
 
   .hero-right { width: 100%; }
@@ -1185,6 +1186,12 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   .hero-text {
     font-size: 2.375rem; /* 38px */
     line-height: 1.211;  /* 46/38 */
+    text-wrap: auto;     /* remove balance — evita quebras estranhas em largura estreita */
+  }
+
+  /* Dots: empurra para baixo do conteúdo hero no mobile */
+  .dots-layer {
+    top: max(calc(90svh - 8px), 680px);
   }
 
   /* About: tipografia mobile */
@@ -1204,14 +1211,35 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     max-width: 100%;
     hyphens: auto;
     margin-top: clamp(2rem, 10vw, 4rem);
-    margin-bottom: clamp(2.5rem, 12vw, 5rem);
+    margin-bottom: 8px;
+  }
+
+  /* ── Work section ── */
+  #work.section { padding-top: 120px; }
+
+  .work-subtitle {
+    font-size: 1rem;      /* 16px */
+    line-height: 1.625;
+    margin-bottom: 80px;
+  }
+
+  .work-table {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
   }
 
   /* ── Work rows: de tabela para cards empilhados ── */
   .work-row {
     flex-direction: column;
-    gap: 16px;
-    padding-bottom: 40px;
+    gap: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .work-date {
+    font-size: 1rem;    /* 16px */
+    line-height: 1.5;
   }
 
   .work-meta {
@@ -1227,8 +1255,23 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     flex-shrink: unset;
   }
 
-  .work-company { font-size: 20px; margin-top: -10px; }
-  .work-body    { font-size: 18px; line-height: 1.5; }
+  .work-company {
+    font-size: 1.5rem;  /* 24px */
+    line-height: 1.333;
+    margin-top: 0;
+  }
+
+  .work-desc {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .work-label,
+  .work-body {
+    font-size: 1rem;    /* 16px */
+    line-height: 1.5;
+  }
 
   /* Imagem do case — exibida no mobile após o texto (reset do comportamento desktop) */
   .work-img {
@@ -1243,7 +1286,8 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     display: block;
     width: 100%;
     max-width: 100%;
-    height: auto;
+    height: 200px;
+    object-fit: cover;
   }
   /* Esconde a imagem se o src estiver vazio */
   .work-img img:not([src]), .work-img img[src=""] {
