@@ -391,9 +391,6 @@ contactRows.forEach((row, idx) => {
 
 // ─── Hero: entrada orquestrada (timeline) ────────────────────────────────────
 document.fonts.ready.then(() => {
-  const heroText = document.querySelector('.hero-text');
-  if (heroText) heroText.classList.add('fonts-ready');
-
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
   // 1. Nav desce do topo

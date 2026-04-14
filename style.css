@@ -4,7 +4,7 @@
   src: url('fonts/Delight-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 
@@ -13,7 +13,7 @@
   src: url('fonts/Delight-Black.woff2') format('woff2');
   font-weight: 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -21,7 +21,7 @@
   src: url('fonts/Delight-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -29,7 +29,7 @@
   src: url('fonts/Landour-RegularDisplay.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -37,7 +37,7 @@
   src: url('fonts/Landour-BoldDisplay.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* ─── Type scale (fluid vw, ref: 1440px → max @ 2160px) ───── */
@@ -158,6 +158,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .nav-hidden {
   transform: translateY(-100%);
+}
+
+.hero-avatar,
+.hero-bio {
+  opacity: 0; /* GSAP anima para 1 na entrada */
 }
 
 .nav-menu {
@@ -399,9 +404,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   opacity: 0;
 }
 
-.hero-text.fonts-ready {
-  opacity: 1;
-}
 
 /* ── Dots layer — absoluto no fluxo da página, rola naturalmente ─
    Começa no fim do hero (≈720/840 da altura) e desce pelo about.
