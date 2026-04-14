@@ -42,28 +42,31 @@ lenis.on('scroll', ({ scroll, direction }) => {
 // ─── Snap suave entre seções ──────────────────
 // Após parar de scrollar por 120ms, snapa para a seção mais próxima do centro.
 // Só snapa as seções de altura 100svh (hero + about), não work/contact.
+// Em touch (hover: none) o momentum nativo é suficiente — snap desativado.
 const snapSections = [...document.querySelectorAll('.section[data-bg="hero"], .section[data-bg="green"]')];
 let snapTimer;
-lenis.on('scroll', () => {
-  clearTimeout(snapTimer);
-  snapTimer = setTimeout(() => {
-    const mid = window.scrollY + window.innerHeight / 2;
-    let closest = null;
-    let minDist = Infinity;
-    snapSections.forEach(s => {
-      const sTop = s.getBoundingClientRect().top + window.scrollY;
-      const sMid = sTop + s.offsetHeight / 2;
-      const dist = Math.abs(mid - sMid);
-      if (dist < minDist) { minDist = dist; closest = s; }
-    });
-    // Só snapa se o centro da seção estiver a menos de 50vh de distância.
-    // Garante que o snap não puxa o usuário de volta quando já está em outra seção.
-    if (closest && minDist < window.innerHeight * 0.5) {
-      const targetY = closest.getBoundingClientRect().top + window.scrollY;
-      lenis.scrollTo(targetY, { duration: 0.8, easing: t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2 });
-    }
-  }, 120);
-});
+if (!window.matchMedia('(hover: none)').matches) {
+  lenis.on('scroll', () => {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      const mid = window.scrollY + window.innerHeight / 2;
+      let closest = null;
+      let minDist = Infinity;
+      snapSections.forEach(s => {
+        const sTop = s.getBoundingClientRect().top + window.scrollY;
+        const sMid = sTop + s.offsetHeight / 2;
+        const dist = Math.abs(mid - sMid);
+        if (dist < minDist) { minDist = dist; closest = s; }
+      });
+      // Só snapa se o centro da seção estiver a menos de 50vh de distância.
+      // Garante que o snap não puxa o usuário de volta quando já está em outra seção.
+      if (closest && minDist < window.innerHeight * 0.5) {
+        const targetY = closest.getBoundingClientRect().top + window.scrollY;
+        lenis.scrollTo(targetY, { duration: 0.8, easing: t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2 });
+      }
+    }, 120);
+  });
+}
 
 // ─── Background transition on scroll ────────
 const bgObserver = new IntersectionObserver(
