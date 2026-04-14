@@ -1,12 +1,4 @@
 /* ─── Fonts ─────────────────────────────────── */
-@font-face {
-  font-family: 'Delight';
-  src: url('fonts/Delight-Light.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-  font-display: block;
-}
-
 
 @font-face {
   font-family: 'Delight';
@@ -109,7 +101,7 @@ html {
 body {
   min-height: 100%;
   font-family: 'Delight', sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   background-color: var(--color-cream);
   color: var(--color-dark);
   -webkit-font-smoothing: antialiased;
@@ -691,9 +683,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-title {
+  font-family: 'Landour', sans-serif;
   font-size: clamp(2rem, 4.444vw, 6rem); /* 64px ref @ 1440px → 96px @ 2160px */
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.125;
+  letter-spacing: -0.02em;
   color: var(--color-cream);
   letter-spacing: -0.02em;
   text-align: left;
@@ -927,7 +921,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   width: 50%;
   font-family: 'Delight', sans-serif;
   font-size: 14px;  /* 12px → 14px (atualizado no Figma) */
-  font-weight: 300;
+  font-weight: 400;
   line-height: 24px;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
@@ -961,7 +955,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   color: var(--color-cream);
   font-family: 'Delight', sans-serif;
   font-size: 0.875rem;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0.01em;
   white-space: nowrap;
   pointer-events: none;
