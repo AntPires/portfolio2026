@@ -1428,10 +1428,15 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     margin-top: 2rem;
   }
 
-  /* Profile text mantém 20px / 36px no mobile (= desktop) */
+  /* Profile text: 16px / 26px conforme Figma mobile */
   .more-profile-text .more-bio {
-    font-size: 1.25rem;  /* 20px */
-    line-height: 1.8;
+    font-size: 1rem;    /* 16px */
+    line-height: 1.625; /* 26/16 */
+  }
+
+  /* Espaço entre parágrafos: 16px no mobile (era 24px) */
+  .more-profile-text .more-bio + .more-bio {
+    margin-top: 1rem; /* 16px */
   }
 
   /* Career: volta para layout em bloco no mobile */
