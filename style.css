@@ -709,9 +709,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-title-serif {
-  font-family: 'Hedvig Letters Serif', serif;
-  font-weight: 400;
-  color: var(--color-cream);
+  font-family: 'Landour', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 
@@ -728,12 +728,20 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-bio {
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Delight', sans-serif;
   font-size: clamp(0.9375rem, 1.389vw, 1.875rem); /* 20px ref @ 1440px → 30px @ 2160px */
   font-weight: 400;
   line-height: 1.8; /* 36/20 */
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
+}
+
+/* Profile text usa Landour Regular — fonte display, mais próxima do tom visual do Figma */
+.more-profile-text .more-bio {
+  font-family: 'Landour', sans-serif;
+  font-size: clamp(1rem, 1.528vw, 2.0625rem); /* 22px ref @ 1440px → 33px @ 2160px */
+  line-height: 1.636; /* 36/22 */
+  letter-spacing: -0.02em;
 }
 
 /* Gap entre parágrafos consecutivos dentro do mesmo bloco */
@@ -770,7 +778,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-caption {
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Delight', sans-serif;
   font-size: 12px;
   line-height: 1.5;
   color: var(--color-cream);
@@ -854,7 +862,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-career-label {
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Delight', sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: var(--color-cream);
@@ -872,7 +880,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 }
 
 .more-career-col-head {
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Delight', sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: var(--color-cream);
@@ -883,10 +891,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 .more-career-bio {
   grid-column: 1;
   grid-row: 2;
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Landour', sans-serif;
   font-size: clamp(1.25rem, 1.667vw, 2.25rem); /* 24px ref @ 1440px → 36px @ 2160px */
   font-weight: 400;
   line-height: 1.5; /* 36/24 */
+  letter-spacing: -0.02em;
   color: var(--color-cream);
   font-feature-settings: 'liga' 0;
   padding-right: 11%;
