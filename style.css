@@ -240,9 +240,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
               border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.work-row:hover {
-  gap: 3vw;
-  border-top-color: var(--color-cream);
+@media (hover: hover) {
+  .work-row:hover {
+    gap: 3vw;
+    border-top-color: var(--color-cream);
+  }
 }
 
 /* Ícone de seta — fora do fluxo flex para não empurrar os outros itens.
@@ -262,9 +264,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
               transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.work-row:hover .work-arrow {
-  opacity: 0;
-  transform: translate(-4px, calc(-50% + 6px));
+@media (hover: hover) {
+  .work-row:hover .work-arrow {
+    opacity: 0;
+    transform: translate(-4px, calc(-50% + 6px));
+  }
 }
 
 /* Imagem do case — oculta por padrão, aparece no hover desktop */
@@ -286,11 +290,13 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   border-radius: 0;
 }
 
-.work-row:hover .work-img {
-  /* Espaço disponível = 100% - meta(10%) - products(10%) - desc(50%) - 3 gaps(12vw)
-     Nunca maior que 276px (tamanho ideal da imagem). */
-  width: min(276px, calc(30% - 12vw));
-  opacity: 1;
+@media (hover: hover) {
+  .work-row:hover .work-img {
+    /* Espaço disponível = 100% - meta(10%) - products(10%) - desc(50%) - 3 gaps(12vw)
+       Nunca maior que 276px (tamanho ideal da imagem). */
+    width: min(276px, calc(30% - 12vw));
+    opacity: 1;
+  }
 }
 
 /* Coluna combinada: data + empresa empilhados */
@@ -1097,18 +1103,6 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   /* Esconde o cursor customizado completamente */
   .cursor-label { display: none !important; }
 
-  /* Work rows: remove hover gap animation e border color change */
-  .work-row:hover {
-    gap: 4vw;
-    border-top-color: #2c2c2c;
-  }
-
-  /* Imagem: não expande em touch/tablet */
-  .work-row:hover .work-img {
-    width: 0;
-    opacity: 0;
-  }
-
   /* Seta sempre visível (sem hover) — centrada no meio da row (tablet).
      Mobile sobrescreve para top: 24px por causa do layout empilhado. */
   .work-arrow {
@@ -1257,7 +1251,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .work-company {
     font-size: 1.5rem;  /* 24px */
-    line-height: 1.333;
+    line-height: 1;     /* 24px — sem espaço extra */
     margin-top: 0;
   }
 
