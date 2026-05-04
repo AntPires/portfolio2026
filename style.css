@@ -246,6 +246,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
     gap: 3vw;
     border-top-color: var(--color-cream);
   }
+  .work-row:not([data-case]) { cursor: none; }
 }
 
 /* Ícone de seta — fora do fluxo flex para não empurrar os outros itens.
@@ -537,6 +538,9 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 /* Estado "contact-copied" — feedback após copiar email (sem ícone) */
 .cursor-label.contact-copied .icon-arrow          { display: none; }
+
+/* Estado "work-soon" — case study em breve (sem ícone) */
+.cursor-label.work-soon .icon-arrow               { display: none; }
 
 
 /* ─── More overlay ──────────────────────────────────────────────────────────

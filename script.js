@@ -370,6 +370,13 @@ document.querySelectorAll('.work-row[data-case]').forEach(row => {
   row.addEventListener('click', () => openCaseOverlay(row.dataset.case));
 });
 
+// Work rows sem case → cursor "case study soon" (desktop only)
+document.querySelectorAll('.work-row:not([data-case])').forEach(row => {
+  row.addEventListener('mousemove',  placeCursor);
+  row.addEventListener('mouseenter', () => showCursor('case study soon', 'work-soon'));
+  row.addEventListener('mouseleave', hideCursor);
+});
+
 
 // Delay para evitar oscilação do cursor ao passar pela borda entre rows
 const ROW_SWITCH_DELAY = 40; // ms
