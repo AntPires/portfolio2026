@@ -258,11 +258,116 @@ function closeOverlay() {
 aboutSection.addEventListener('click', openOverlay);
 moreClose.addEventListener('click', closeOverlay);
 
-// Fechar também com Escape
+// Fechar também com Escape (more-overlay e case overlays)
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && moreOverlay.classList.contains('visible')) {
-    closeOverlay();
-  }
+  if (e.key !== 'Escape') return;
+  if (moreOverlay.classList.contains('visible')) closeOverlay();
+  const visibleCase = document.querySelector('.case-overlay.visible');
+  if (visibleCase) closeCaseOverlay(visibleCase);
+});
+
+
+// ─── Case overlays ────────────────────────────────────────────────────────────
+
+let caseAnimCtx = null;
+
+function initCaseAnimations(overlayEl) {
+  if (caseAnimCtx) { caseAnimCtx.revert(); caseAnimCtx = null; }
+
+  caseAnimCtx = gsap.context(() => {
+    const sc = { scroller: overlayEl };
+
+    // Título
+    gsap.from(overlayEl.querySelector('.case-title'), {
+      scrollTrigger: { ...sc, trigger: overlayEl.querySelector('.case-main'), start: 'top 72%', toggleActions: 'play none none none' },
+      opacity: 0, y: 28, filter: 'blur(6px)', duration: 0.75, ease: 'power3.out', clearProps: 'all',
+    });
+
+    // Parágrafos do texto
+    gsap.from(overlayEl.querySelectorAll('.case-body p'), {
+      scrollTrigger: { ...sc, trigger: overlayEl.querySelector('.case-main'), start: 'top 68%', toggleActions: 'play none none none' },
+      opacity: 0, y: 20, duration: 0.6, stagger: 0.1, ease: 'power3.out', clearProps: 'all',
+    });
+
+    // Métricas
+    gsap.from(overlayEl.querySelectorAll('.case-metric'), {
+      scrollTrigger: { ...sc, trigger: overlayEl.querySelector('.case-metrics'), start: 'top 72%', toggleActions: 'play none none none' },
+      opacity: 0, y: 24, duration: 0.6, stagger: 0.12, ease: 'power3.out', clearProps: 'all',
+    });
+
+    // Imagens da gallery
+    const galleryItems = overlayEl.querySelectorAll('.case-img-full, .case-img-half');
+    galleryItems.forEach((el) => {
+      gsap.from(el, {
+        scrollTrigger: { ...sc, trigger: el, start: 'top 78%', toggleActions: 'play none none none' },
+        opacity: 0, y: 32, scale: 0.98, duration: 0.7, ease: 'power3.out', clearProps: 'all',
+      });
+    });
+
+    // Título do team
+    gsap.from(overlayEl.querySelector('.case-team-title'), {
+      scrollTrigger: { ...sc, trigger: overlayEl.querySelector('.case-team-section'), start: 'top 72%', toggleActions: 'play none none none' },
+      opacity: 0, y: 28, duration: 0.7, ease: 'power3.out', clearProps: 'all',
+    });
+
+    // Grupos do team
+    gsap.from(overlayEl.querySelectorAll('.case-team-group'), {
+      scrollTrigger: { ...sc, trigger: overlayEl.querySelector('.case-team-section'), start: 'top 68%', toggleActions: 'play none none none' },
+      opacity: 0, y: 20, duration: 0.55, stagger: 0.08, ease: 'power3.out', clearProps: 'all',
+    });
+  });
+}
+
+async function openCaseOverlay(caseId) {
+  const overlayEl = document.getElementById(`case-${caseId}-overlay`);
+  if (!overlayEl) return;
+
+  await document.fonts.ready;
+  lenis.stop();
+  overlayEl.classList.add('visible');
+  overlayEl.scrollTop = 0;
+  nav.style.display = 'none';
+  hideCursor();
+
+  requestAnimationFrame(() => {
+    // Botão fechar
+    const closeBtn = overlayEl.querySelector('.case-close');
+    gsap.fromTo(closeBtn,
+      { opacity: 0, y: -12 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out', delay: 0.1 }
+    );
+
+    // Imagem hero
+    const heroImg = overlayEl.querySelector('.case-hero img');
+    gsap.fromTo(heroImg,
+      { opacity: 0, y: 24, scale: 0.98 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: 'power3.out', delay: 0.15, clearProps: 'all' }
+    );
+
+    ScrollTrigger.refresh();
+    initCaseAnimations(overlayEl);
+  });
+}
+
+function closeCaseOverlay(overlayEl) {
+  overlayEl.classList.remove('visible');
+  nav.style.display = '';
+  nav.classList.remove('nav-hidden');
+  if (caseAnimCtx) { caseAnimCtx.revert(); caseAnimCtx = null; }
+  lenis.start();
+}
+
+// Botão fechar dentro de cada case overlay
+document.querySelectorAll('.case-close').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const overlay = btn.closest('.case-overlay');
+    if (overlay) closeCaseOverlay(overlay);
+  });
+});
+
+// Work rows com case → click abre overlay, cursor pointer (via CSS)
+document.querySelectorAll('.work-row[data-case]').forEach(row => {
+  row.addEventListener('click', () => openCaseOverlay(row.dataset.case));
 });
 
 
