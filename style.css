@@ -1235,7 +1235,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
 .case-video-wrapper {
   position: relative;
-  width: 100%;
+  width: 50%;
   aspect-ratio: 16 / 9;
   border-radius: 24px;
   overflow: hidden;
@@ -1752,6 +1752,10 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 
   .case-video-section {
     padding: var(--case-margin-v-short) 6.4vw 0;
+  }
+
+  .case-video-wrapper {
+    width: 100%; /* full-width no mobile */
   }
 
   .case-gallery-section {
