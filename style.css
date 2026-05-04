@@ -1356,6 +1356,7 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
 /* Work rows clicáveis — cursor pointer */
 .work-row[data-case] { cursor: pointer; }
 
+
 /* ── Touch / no-hover: remove all mouse-only interactions ──────────────────
    @media (hover: none) apanha touch screens e stylus sem hover.
    Tudo que depende de mouse (cursores custom, hover states visuais)

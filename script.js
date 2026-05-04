@@ -370,11 +370,22 @@ document.querySelectorAll('.work-row[data-case]').forEach(row => {
   row.addEventListener('click', () => openCaseOverlay(row.dataset.case));
 });
 
-// Work rows sem case → cursor "case study soon" (desktop only)
+// Work rows sem case → cursor label no desktop + toast no touch
+const soonToast = document.getElementById('soon-toast');
+let soonToastTimer = null;
+
+function showSoonToast() {
+  if (!soonToast) return;
+  clearTimeout(soonToastTimer);
+  soonToast.classList.add('visible');
+  soonToastTimer = setTimeout(() => soonToast.classList.remove('visible'), 1500);
+}
+
 document.querySelectorAll('.work-row:not([data-case])').forEach(row => {
   row.addEventListener('mousemove',  placeCursor);
   row.addEventListener('mouseenter', () => showCursor('case study soon', 'work-soon'));
   row.addEventListener('mouseleave', hideCursor);
+  row.addEventListener('click', showSoonToast);
 });
 
 
