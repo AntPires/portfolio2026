@@ -1241,6 +1241,11 @@ body[data-bg="dark"]  .nav-logo { color: var(--color-green); }
   overflow: hidden;
 }
 
+/* Placeholder visual enquanto o vídeo não é adicionado */
+.case-video-wrapper--placeholder {
+  background: #e2e2e2;
+}
+
 .case-video-wrapper iframe {
   position: absolute;
   inset: 0;
