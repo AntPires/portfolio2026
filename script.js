@@ -230,6 +230,7 @@ async function openOverlay() {
   moreOverlay.scrollTop = 0;
   nav.style.display = 'none';
   hideCursor();
+  if (typeof umami !== 'undefined') umami.track('more-about-me-open');
   requestAnimationFrame(() => {
     // Botão fechar — desce do topo antes do título
     gsap.fromTo('.more-close',
