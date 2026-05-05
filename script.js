@@ -325,6 +325,7 @@ async function openCaseOverlay(caseId) {
   await document.fonts.ready;
   lenis.stop();
   overlayEl.classList.add('visible');
+  if (typeof umami !== 'undefined') umami.track('case-study-open', { case: caseId });
   overlayEl.scrollTop = 0;
   nav.style.display = 'none';
   hideCursor();
